@@ -1,12 +1,12 @@
 workflows:
-  android-debug-build:
+  android-apk-build:
     name: Android Debug APK
     max_build_duration: 60
     instance_type: mac_mini_m1
     environment:
       java: 17
       vars:
-        PACKAGE_NAME: "com.aistudio.datacashpk.app"
+        PACKAGE_NAME: "com.aistudio.datacash"
     scripts:
       - name: Set up Gradle Executable Permissions
         script: |
@@ -16,3 +16,4 @@ workflows:
           ./gradlew assembleDebug --stacktrace
     artifacts:
       - app/build/outputs/**/*.apk
+      
