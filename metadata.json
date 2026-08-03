@@ -1,0 +1,6 @@
+{
+  "name": "DataCash PK",
+  "description": "Responsive MB Selling & Earning Cash Out App for Pakistan",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

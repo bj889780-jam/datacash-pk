@@ -1,0 +1,18 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="96"
+    android:viewportHeight="96">
+    <!-- White background circle -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M48,0A48,48 0,1 1,48,96A48,48 0,1 1,48,0Z" />
+    <!-- EasyPaisa 'e' top loop (black) -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M48,20 C34,20 24,28 24,40 C24,50 32,56 46,56 C56,56 64,52 68,46 L58,40 C55,44 51,46 46,46 C38,46 34,42 34,36 L68,36 C68,26 60,20 48,20 Z M34,30 C36,25 41,24 48,24 C54,24 58,27 58,30 L34,30 Z" />
+    <!-- EasyPaisa green bottom curve -->
+    <path
+        android:fillColor="#00C853"
+        android:pathData="M26,48 C28,60 38,68 50,68 C62,68 70,60 72,52 L62,50 C60,55 55,59 49,59 C41,59 34,53 33,48 L26,48 Z" />
+</vector>

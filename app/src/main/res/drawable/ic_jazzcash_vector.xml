@@ -1,0 +1,18 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="96"
+    android:viewportHeight="96">
+    <!-- White background circle -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M48,0A48,48 0,1 1,48,96A48,48 0,1 1,48,0Z" />
+    <!-- Yellow Left Crescent Shape -->
+    <path
+        android:fillColor="#FFC107"
+        android:pathData="M44,22 C36,22 30,30 30,42 C30,58 42,68 52,70 C40,68 36,54 40,40 C42,32 46,26 44,22 Z" />
+    <!-- Red Right Crescent Shape -->
+    <path
+        android:fillColor="#ED1C24"
+        android:pathData="M48,22 C56,22 68,26 70,36 C72,50 56,66 42,70 C52,66 60,56 60,44 C60,32 54,22 48,22 Z" />
+</vector>
