@@ -20,14 +20,19 @@ jobs:
         run: |
           if [ -f package.json ]; then npm install && npm run build; fi
 
-      - name: Package App Files
+      - name: Zip Files Correctly for WebIntoApp
         run: |
-          mkdir -p output
-          zip -r output/DataCash-PK-WebBundle.zip . -x "*.git*"
+          if [ -d dist ]; then
+            cd dist && zip -r ../DataCash-PK-App.zip .
+          elif [ -d build ]; then
+            cd build && zip -r ../DataCash-PK-App.zip .
+          else
+            zip -r DataCash-PK-App.zip . -x "*.git*"
+          fi
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: DataCash-PK-App
-          path: output/DataCash-PK-WebBundle.zip
+          path: DataCash-PK-App.zip
           
