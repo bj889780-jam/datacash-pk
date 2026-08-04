@@ -74,7 +74,7 @@ fun SplashScreen(
         ) {
             // Centered DataCash App Logo Icon
             Image(
-                painter = painterResource(id = R.drawable.datacash_app_logo),
+                painter = safePainterResource(id = R.drawable.datacash_app_logo),
                 contentDescription = "DataCash PK Logo",
                 modifier = Modifier
                     .size(110.dp)

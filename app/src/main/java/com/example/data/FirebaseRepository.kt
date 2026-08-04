@@ -12,7 +12,8 @@ class FirebaseRepository {
 
     private val isFirebaseAvailable: Boolean
         get() = try {
-            FirebaseApp.getInstance() != null
+            FirebaseApp.getInstance()
+            true
         } catch (e: Throwable) {
             false
         }

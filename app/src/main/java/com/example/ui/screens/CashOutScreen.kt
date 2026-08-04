@@ -61,6 +61,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.R
 import com.example.data.PaymentMethod
+import com.example.ui.components.safePainterResource
 import com.example.viewmodel.DataCashUiState
 import com.example.ui.theme.AccentGold
 import com.example.ui.theme.ActiveYellow
@@ -259,7 +260,7 @@ fun CashOutScreen(
                                         when (method) {
                                             PaymentMethod.EASYPAISA -> {
                                                 Image(
-                                                    painter = painterResource(id = R.drawable.ic_easypaisa_vector),
+                                                    painter = safePainterResource(id = R.drawable.ic_easypaisa_vector),
                                                     contentDescription = "EasyPaisa Official Logo",
                                                     modifier = Modifier
                                                         .fillMaxSize()
@@ -270,7 +271,7 @@ fun CashOutScreen(
                                             }
                                             PaymentMethod.JAZZCASH -> {
                                                 Image(
-                                                    painter = painterResource(id = R.drawable.ic_jazzcash_vector),
+                                                    painter = safePainterResource(id = R.drawable.ic_jazzcash_vector),
                                                     contentDescription = "JazzCash Official Logo",
                                                     modifier = Modifier
                                                         .fillMaxSize()

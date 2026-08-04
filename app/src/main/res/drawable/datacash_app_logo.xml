@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- Background Card -->
+    <path
+        android:fillColor="#0284C7"
+        android:pathData="M24,0 L84,0 A24,24 0 0,1 108,24 L108,84 A24,24 0 0,1 84,108 L24,108 A24,24 0 0,1 0,84 L0,24 A24,24 0 0,1 24,0 Z" />
+
+    <!-- Subtle Inner Glow -->
+    <path
+        android:fillColor="#38BDF8"
+        android:alpha="0.2"
+        android:pathData="M54,12 C77.196,12 96,30.804 96,54 C96,77.196 77.196,96 54,96 C30.804,96 12,77.196 12,54 C12,30.804 30.804,12 54,12 Z" />
+
+    <!-- Data Graph Wave -->
+    <path
+        android:strokeColor="#10B981"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M26,72 L42,54 L58,62 L82,36" />
+
+    <!-- Graph Nodes -->
+    <path
+        android:fillColor="#34D399"
+        android:pathData="M26,72 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0" />
+    <path
+        android:fillColor="#34D399"
+        android:pathData="M42,54 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0" />
+    <path
+        android:fillColor="#34D399"
+        android:pathData="M58,62 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0" />
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M82,36 m-6,0 a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0" />
+
+    <!-- Central Currency Token Symbol -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,26 C57.31,26 60,28.69 60,32 C60,35.31 57.31,38 54,38 L48,38 L48,46 L54,46 C57.31,46 60,48.69 60,52 C60,55.31 57.31,58 54,58 L44,58 C42.9,58 42,57.1 42,56 C42,54.9 42.9,54 44,54 L54,54 C55.1,54 56,53.1 56,52 C56,50.9 55.1,50 54,50 L48,50 C44.69,50 42,47.31 42,44 L42,32 C42,28.69 44.69,26 48,26 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M49,22 L53,22 L53,26 L49,26 Z M49,58 L53,58 L53,62 L49,62 Z" />
+</vector>
