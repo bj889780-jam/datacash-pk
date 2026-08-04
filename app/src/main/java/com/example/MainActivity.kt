@@ -49,10 +49,22 @@ import com.example.ui.theme.DataCashTheme
 import com.example.utils.NetworkUtils
 import com.example.viewmodel.DataCashViewModel
 
+import android.util.Log
+import com.google.firebase.FirebaseApp
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        try {
+            FirebaseApp.initializeApp(applicationContext)
+        } catch (e: Throwable) {
+            Log.e("MainActivity", "FirebaseApp init failed: ${e.message}")
+        }
+        try {
+            enableEdgeToEdge()
+        } catch (e: Throwable) {
+            Log.e("MainActivity", "enableEdgeToEdge failed: ${e.message}")
+        }
         setContent {
             val viewModel: DataCashViewModel = viewModel()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()

@@ -121,20 +121,24 @@ class DataCashViewModel : ViewModel() {
     }
 
     private fun checkInitialFirebaseUser() {
-        val user = firebaseRepository.getCurrentUser()
-        if (user != null) {
-            _uiState.update {
-                it.copy(
-                    isUserLoggedIn = true,
-                    authUserUid = user.uid,
-                    userProfile = UserProfile(
-                        name = user.displayName ?: "DataCash User",
-                        email = user.email ?: "user@datacash.app"
-                    ),
-                    cloudSyncStatus = "Firebase Connected: ${user.email}"
-                )
+        try {
+            val user = firebaseRepository.getCurrentUser()
+            if (user != null) {
+                _uiState.update {
+                    it.copy(
+                        isUserLoggedIn = true,
+                        authUserUid = user.uid,
+                        userProfile = UserProfile(
+                            name = user.displayName ?: "DataCash User",
+                            email = user.email ?: "user@datacash.app"
+                        ),
+                        cloudSyncStatus = "Firebase Connected: ${user.email}"
+                    )
+                }
+                loadUserDataFromFirestore(user.uid)
             }
-            loadUserDataFromFirestore(user.uid)
+        } catch (e: Throwable) {
+            // Firebase unavailable or missing configuration
         }
     }
 

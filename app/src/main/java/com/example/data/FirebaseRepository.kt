@@ -12,27 +12,31 @@ class FirebaseRepository {
 
     private val isFirebaseAvailable: Boolean
         get() = try {
-            FirebaseApp.getApps(FirebaseApp.getInstance().applicationContext).isNotEmpty()
-        } catch (e: Exception) {
+            FirebaseApp.getInstance() != null
+        } catch (e: Throwable) {
             false
         }
 
     private val auth: FirebaseAuth?
         get() = try {
             if (isFirebaseAvailable) FirebaseAuth.getInstance() else null
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             null
         }
 
     private val db: FirebaseFirestore?
         get() = try {
             if (isFirebaseAvailable) FirebaseFirestore.getInstance() else null
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             null
         }
 
     fun getCurrentUser(): FirebaseUser? {
-        return auth?.currentUser
+        return try {
+            auth?.currentUser
+        } catch (e: Throwable) {
+            null
+        }
     }
 
     suspend fun signUpWithEmail(email: String, pass: String, name: String): Result<FirebaseUser> {
@@ -79,7 +83,11 @@ class FirebaseRepository {
     }
 
     fun signOut() {
-        auth?.signOut()
+        try {
+            auth?.signOut()
+        } catch (e: Throwable) {
+            Log.e("FirebaseRepository", "SignOut error", e)
+        }
     }
 
     suspend fun fetchUserData(uid: String): Map<String, Any>? {
