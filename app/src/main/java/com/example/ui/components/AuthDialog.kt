@@ -1,7 +1,9 @@
 package com.example.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import com.example.R
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -319,8 +321,8 @@ fun AuthDialog(
                     onClick = onGoogleSignIn,
                     enabled = !isLoading,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        contentColor = MaterialTheme.colorScheme.onSurface
                     ),
                     border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)),
                     shape = RoundedCornerShape(14.dp),
@@ -333,20 +335,11 @@ fun AuthDialog(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        Surface(
-                            shape = CircleShape,
-                            color = Color.White,
-                            modifier = Modifier.size(22.dp)
-                        ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Text(
-                                    text = "G",
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Black,
-                                    color = Color(0xFF4285F4)
-                                )
-                            }
-                        }
+                        Image(
+                            painter = safePainterResource(id = R.drawable.ic_google_logo),
+                            contentDescription = "Official Google Multi-Colored Logo",
+                            modifier = Modifier.size(20.dp)
+                        )
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
                             text = "Continue with Google",

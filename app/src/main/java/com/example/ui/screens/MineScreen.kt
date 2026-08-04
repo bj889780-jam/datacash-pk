@@ -1,5 +1,6 @@
 package com.example.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +19,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.filled.Badge
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.ExitToApp
@@ -48,11 +50,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.testTag
+import com.example.R
+import com.example.data.PaymentMethod
 import com.example.data.WithdrawalStatus
+import com.example.ui.components.safePainterResource
 import com.example.viewmodel.DataCashUiState
 import com.example.ui.theme.AccentGold
 import com.example.ui.theme.BentoBlue
@@ -386,31 +392,110 @@ fun MineScreen(
                     } else {
                         uiState.withdrawalHistory.forEach { txn ->
                             Surface(
-                                shape = RoundedCornerShape(14.dp),
-                                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                                shape = RoundedCornerShape(16.dp),
+                                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
+                                border = androidx.compose.foundation.BorderStroke(
+                                    width = 1.dp,
+                                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+                                ),
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(12.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceBetween
+                                        .padding(10.dp),
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Column {
+                                    // Payment Method Brand Thumbnail Badge
+                                    Surface(
+                                        modifier = Modifier
+                                            .size(38.dp)
+                                            .border(
+                                                width = 1.dp,
+                                                color = Color(txn.paymentMethod.brandColorHex).copy(alpha = 0.4f),
+                                                shape = CircleShape
+                                            ),
+                                        shape = CircleShape,
+                                        color = Color.White
+                                    ) {
+                                        Box(
+                                            modifier = Modifier.fillMaxSize(),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            when (txn.paymentMethod) {
+                                                PaymentMethod.EASYPAISA -> {
+                                                    Image(
+                                                        painter = safePainterResource(id = R.drawable.ic_easypaisa_logo),
+                                                        contentDescription = null,
+                                                        modifier = Modifier
+                                                            .fillMaxSize()
+                                                            .clip(CircleShape),
+                                                        contentScale = ContentScale.Crop
+                                                    )
+                                                }
+                                                PaymentMethod.JAZZCASH -> {
+                                                    Image(
+                                                        painter = safePainterResource(id = R.drawable.ic_jazzcash_logo),
+                                                        contentDescription = null,
+                                                        modifier = Modifier
+                                                            .fillMaxSize()
+                                                            .clip(CircleShape),
+                                                        contentScale = ContentScale.Crop
+                                                    )
+                                                }
+                                                PaymentMethod.BANK_TRANSFER -> {
+                                                    Box(
+                                                        modifier = Modifier
+                                                            .fillMaxSize()
+                                                            .background(Color(txn.paymentMethod.brandColorHex)),
+                                                        contentAlignment = Alignment.Center
+                                                    ) {
+                                                        Icon(
+                                                            imageVector = Icons.Default.AccountBalance,
+                                                            contentDescription = null,
+                                                            tint = Color.White,
+                                                            modifier = Modifier.size(20.dp)
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    Spacer(modifier = Modifier.width(10.dp))
+
+                                    // Transaction details column
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Text(
+                                                text = txn.paymentMethod.title,
+                                                fontSize = 13.sp,
+                                                fontWeight = FontWeight.ExtraBold,
+                                                color = MaterialTheme.colorScheme.onSurface
+                                            )
+                                            Spacer(modifier = Modifier.width(6.dp))
+                                            Text(
+                                                text = "• ${txn.accountNumber}",
+                                                fontSize = 12.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
                                         Text(
-                                            text = "${txn.paymentMethod.title} (${txn.accountNumber})",
-                                            fontSize = 13.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            color = MaterialTheme.colorScheme.onSurface
-                                        )
-                                        Text(
-                                            text = "${txn.timestamp} • ID: ${txn.id}",
+                                            text = "Holder: ${txn.accountHolder}",
                                             fontSize = 11.sp,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
+                                        Text(
+                                            text = "${txn.timestamp} • TXN: #${txn.id.takeLast(6).uppercase()}",
+                                            fontSize = 10.sp,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+                                        )
                                     }
 
+                                    Spacer(modifier = Modifier.width(8.dp))
+
+                                    // Amount & Status Badge column
                                     Column(horizontalAlignment = Alignment.End) {
                                         Text(
                                             text = "PKR %.2f".format(txn.requestedAmount),
@@ -418,21 +503,32 @@ fun MineScreen(
                                             fontWeight = FontWeight.Black,
                                             color = MaterialTheme.colorScheme.onSurface
                                         )
-                                        Text(
-                                            text = when (txn.status) {
-                                                WithdrawalStatus.PENDING_1_HR -> "⏳ Processing (1 Hr)"
-                                                WithdrawalStatus.APPROVED -> "✓ Approved"
-                                                WithdrawalStatus.COMPLETED -> "✓ Completed"
-                                                WithdrawalStatus.REJECTED -> "✕ Rejected (Refunded)"
-                                            },
-                                            fontSize = 11.sp,
-                                            fontWeight = FontWeight.Bold,
+                                        Spacer(modifier = Modifier.height(2.dp))
+                                        Surface(
+                                            shape = RoundedCornerShape(8.dp),
                                             color = when (txn.status) {
-                                                WithdrawalStatus.PENDING_1_HR -> AccentGold
-                                                WithdrawalStatus.REJECTED -> StopRed
-                                                else -> BentoEmerald
+                                                WithdrawalStatus.PENDING_1_HR -> AccentGold.copy(alpha = 0.15f)
+                                                WithdrawalStatus.REJECTED -> StopRed.copy(alpha = 0.15f)
+                                                else -> BentoEmerald.copy(alpha = 0.15f)
                                             }
-                                        )
+                                        ) {
+                                            Text(
+                                                text = when (txn.status) {
+                                                    WithdrawalStatus.PENDING_1_HR -> "⏳ Processing"
+                                                    WithdrawalStatus.APPROVED -> "✓ Approved"
+                                                    WithdrawalStatus.COMPLETED -> "✓ Completed"
+                                                    WithdrawalStatus.REJECTED -> "✕ Rejected"
+                                                },
+                                                fontSize = 10.sp,
+                                                fontWeight = FontWeight.ExtraBold,
+                                                color = when (txn.status) {
+                                                    WithdrawalStatus.PENDING_1_HR -> AccentGold
+                                                    WithdrawalStatus.REJECTED -> StopRed
+                                                    else -> BentoEmerald
+                                                },
+                                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                            )
+                                        }
                                     }
                                 }
                             }

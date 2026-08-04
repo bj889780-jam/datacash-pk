@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.lazy.LazyColumn
@@ -94,6 +95,7 @@ fun AdminDashboardDialog(
         Surface(
             modifier = Modifier
                 .fillMaxSize()
+                .statusBarsPadding()
                 .padding(12.dp)
                 .clip(RoundedCornerShape(24.dp))
                 .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(24.dp))

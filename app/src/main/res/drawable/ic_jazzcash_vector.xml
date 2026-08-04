@@ -1,18 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="96dp"
-    android:height="96dp"
-    android:viewportWidth="96"
-    android:viewportHeight="96">
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
     <!-- White background circle -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M48,0A48,48 0,1 1,48,96A48,48 0,1 1,48,0Z" />
-    <!-- Yellow Left Crescent Shape -->
+        android:pathData="M60,0 A60,60 0 1,1 60,120 A60,60 0 1,1 60,0 Z" />
+    <!-- JazzCash Left Golden Yellow Swoosh (#FFB800) -->
     <path
         android:fillColor="#FFC107"
-        android:pathData="M44,22 C36,22 30,30 30,42 C30,58 42,68 52,70 C40,68 36,54 40,40 C42,32 46,26 44,22 Z" />
-    <!-- Red Right Crescent Shape -->
+        android:pathData="M54,26 C44,26 36,36 36,52 C36,72 50,86 64,88 C50,85 44,68 49,50 C52,40 57,32 54,26 Z" />
+    <!-- JazzCash Right Vibrant Red Swoosh (#ED1C24) -->
     <path
         android:fillColor="#ED1C24"
-        android:pathData="M48,22 C56,22 68,26 70,36 C72,50 56,66 42,70 C52,66 60,56 60,44 C60,32 54,22 48,22 Z" />
+        android:pathData="M60,26 C70,26 84,32 87,44 C90,62 70,82 52,88 C64,83 74,70 74,55 C74,40 67,26 60,26 Z" />
 </vector>

@@ -111,52 +111,9 @@ fun CashOutScreen(
             .padding(horizontal = 14.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        item { Spacer(modifier = Modifier.height(6.dp)) }
+        item { Spacer(modifier = Modifier.height(4.dp)) }
 
-        // 1. Prominent "100% Free - No Deposit Required" Bento Tag Notice
-        item {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(
-                        width = 1.dp,
-                        color = BentoEmerald.copy(alpha = 0.3f),
-                        shape = RoundedCornerShape(22.dp)
-                    ),
-                shape = RoundedCornerShape(22.dp),
-                colors = CardDefaults.cardColors(containerColor = BentoEmeraldLight)
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.CheckCircle,
-                        contentDescription = null,
-                        tint = BentoEmerald,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Column {
-                        Text(
-                            text = "100% FREE MODEL • NO DEPOSIT",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = BentoEmerald,
-                            letterSpacing = 0.8.sp
-                        )
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Text(
-                            text = "Instant real payouts directly to your Pakistani mobile wallet or bank.",
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-            }
-        }
-
-        // Available Balance Bento Card
+        // Available Balance Bento Card (Screen starts directly here)
         item {
             Card(
                 modifier = Modifier
@@ -260,24 +217,22 @@ fun CashOutScreen(
                                         when (method) {
                                             PaymentMethod.EASYPAISA -> {
                                                 Image(
-                                                    painter = safePainterResource(id = R.drawable.ic_easypaisa_vector),
+                                                    painter = safePainterResource(id = R.drawable.ic_easypaisa_logo),
                                                     contentDescription = "EasyPaisa Official Logo",
                                                     modifier = Modifier
                                                         .fillMaxSize()
-                                                        .padding(4.dp)
                                                         .clip(CircleShape),
-                                                    contentScale = ContentScale.Fit
+                                                    contentScale = ContentScale.Crop
                                                 )
                                             }
                                             PaymentMethod.JAZZCASH -> {
                                                 Image(
-                                                    painter = safePainterResource(id = R.drawable.ic_jazzcash_vector),
+                                                    painter = safePainterResource(id = R.drawable.ic_jazzcash_logo),
                                                     contentDescription = "JazzCash Official Logo",
                                                     modifier = Modifier
                                                         .fillMaxSize()
-                                                        .padding(4.dp)
                                                         .clip(CircleShape),
-                                                    contentScale = ContentScale.Fit
+                                                    contentScale = ContentScale.Crop
                                                 )
                                             }
                                             PaymentMethod.BANK_TRANSFER -> {
