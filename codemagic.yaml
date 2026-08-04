@@ -16,6 +16,6 @@ workflows:
           fi
       - name: Build Android Debug APK
         script: |
-          ./gradlew assembleDebug --stacktrace
+          gradle assembleDebug --stacktrace
     artifacts:
       - app/build/outputs/**/*.apk
