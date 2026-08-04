@@ -8,9 +8,12 @@ workflows:
       vars:
         PACKAGE_NAME: "com.aistudio.datacashpk.app"
     scripts:
-      - name: Set up Gradle Executable Permissions
+      - name: Set up Gradle Executable Permissions and Wrapper
         script: |
           chmod +x gradlew || true
+          if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
+            gradle wrapper || true
+          fi
       - name: Build Android Debug APK
         script: |
           ./gradlew assembleDebug --stacktrace
