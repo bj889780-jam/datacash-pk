@@ -34,7 +34,10 @@ fun safePainterResource(
                 }
                 if (type == XmlPullParser.START_TAG) {
                     val rootTagName = parser.name
-                    rootTagName == "vector" || rootTagName == "animated-vector"
+                    rootTagName == "vector" || rootTagName == "animated-vector" ||
+                            rootTagName == "layer-list" || rootTagName == "selector" ||
+                            rootTagName == "shape" || rootTagName == "bitmap" ||
+                            rootTagName == "adaptive-icon"
                 } else {
                     false
                 }
