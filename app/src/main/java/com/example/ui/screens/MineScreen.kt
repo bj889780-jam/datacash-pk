@@ -73,6 +73,9 @@ import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.filled.Login
 import androidx.compose.material.icons.filled.AdminPanelSettings
 
+import androidx.compose.material.icons.filled.History
+import com.example.ui.components.WithdrawalHistoryDialog
+
 @Composable
 fun MineScreen(
     uiState: DataCashUiState,
@@ -83,6 +86,7 @@ fun MineScreen(
 ) {
     var showLogoutDialog by remember { mutableStateOf(false) }
     var showHelpDialog by remember { mutableStateOf(false) }
+    var showWithdrawalHistoryDialog by remember { mutableStateOf(false) }
 
     LazyColumn(
         modifier = modifier
@@ -160,35 +164,6 @@ fun MineScreen(
                             fontSize = 13.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
-                    }
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    // PROMINENT OWNER TAG: "Owner: Bilal Iqbal Jamali"
-                    Surface(
-                        shape = RoundedCornerShape(16.dp),
-                        color = BentoEmeraldLight,
-                        border = androidx.compose.foundation.BorderStroke(1.dp, BentoEmerald.copy(alpha = 0.3f)),
-                        modifier = Modifier.padding(horizontal = 8.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Badge,
-                                contentDescription = null,
-                                tint = BentoEmerald,
-                                modifier = Modifier.size(18.dp)
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = uiState.userProfile.ownerTag,
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.ExtraBold,
-                                color = BentoEmerald
-                            )
-                        }
                     }
                 }
             }
@@ -355,7 +330,7 @@ fun MineScreen(
             }
         }
 
-        // 3. Withdrawal History Sub-Section Bento Card
+        // 3. Dedicated Withdrawal History Button Card
         item {
             Card(
                 modifier = Modifier
@@ -368,171 +343,42 @@ fun MineScreen(
                 shape = RoundedCornerShape(24.dp),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {
-                Column(
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(18.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(
-                        text = "WITHDRAWAL REQUESTS HISTORY",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        letterSpacing = 1.sp
-                    )
-
-                    if (uiState.withdrawalHistory.isEmpty()) {
+                    Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "No withdrawal requests submitted yet.",
-                            fontSize = 13.sp,
+                            text = "WITHDRAWAL HISTORY",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.ExtraBold,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(vertical = 6.dp)
+                            letterSpacing = 1.sp
                         )
-                    } else {
-                        uiState.withdrawalHistory.forEach { txn ->
-                            Surface(
-                                shape = RoundedCornerShape(16.dp),
-                                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
-                                border = androidx.compose.foundation.BorderStroke(
-                                    width = 1.dp,
-                                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
-                                ),
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(10.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    // Payment Method Brand Thumbnail Badge
-                                    Surface(
-                                        modifier = Modifier
-                                            .size(38.dp)
-                                            .border(
-                                                width = 1.dp,
-                                                color = Color(txn.paymentMethod.brandColorHex).copy(alpha = 0.4f),
-                                                shape = CircleShape
-                                            ),
-                                        shape = CircleShape,
-                                        color = Color.White
-                                    ) {
-                                        Box(
-                                            modifier = Modifier.fillMaxSize(),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            when (txn.paymentMethod) {
-                                                PaymentMethod.EASYPAISA -> {
-                                                    Image(
-                                                        painter = safePainterResource(id = R.drawable.ic_easypaisa_logo),
-                                                        contentDescription = null,
-                                                        modifier = Modifier
-                                                            .fillMaxSize()
-                                                            .clip(CircleShape),
-                                                        contentScale = ContentScale.Crop
-                                                    )
-                                                }
-                                                PaymentMethod.JAZZCASH -> {
-                                                    Image(
-                                                        painter = safePainterResource(id = R.drawable.ic_jazzcash_logo),
-                                                        contentDescription = null,
-                                                        modifier = Modifier
-                                                            .fillMaxSize()
-                                                            .clip(CircleShape),
-                                                        contentScale = ContentScale.Crop
-                                                    )
-                                                }
-                                                PaymentMethod.BANK_TRANSFER -> {
-                                                    Box(
-                                                        modifier = Modifier
-                                                            .fillMaxSize()
-                                                            .background(Color(txn.paymentMethod.brandColorHex)),
-                                                        contentAlignment = Alignment.Center
-                                                    ) {
-                                                        Icon(
-                                                            imageVector = Icons.Default.AccountBalance,
-                                                            contentDescription = null,
-                                                            tint = Color.White,
-                                                            modifier = Modifier.size(20.dp)
-                                                        )
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "${uiState.withdrawalHistory.size} Payout Requests Recorded",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
 
-                                    Spacer(modifier = Modifier.width(10.dp))
-
-                                    // Transaction details column
-                                    Column(modifier = Modifier.weight(1f)) {
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Text(
-                                                text = txn.paymentMethod.title,
-                                                fontSize = 13.sp,
-                                                fontWeight = FontWeight.ExtraBold,
-                                                color = MaterialTheme.colorScheme.onSurface
-                                            )
-                                            Spacer(modifier = Modifier.width(6.dp))
-                                            Text(
-                                                text = "• ${txn.accountNumber}",
-                                                fontSize = 12.sp,
-                                                fontWeight = FontWeight.Bold,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                                            )
-                                        }
-                                        Text(
-                                            text = "Holder: ${txn.accountHolder}",
-                                            fontSize = 11.sp,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                        Text(
-                                            text = "${txn.timestamp} • TXN: #${txn.id.takeLast(6).uppercase()}",
-                                            fontSize = 10.sp,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
-                                        )
-                                    }
-
-                                    Spacer(modifier = Modifier.width(8.dp))
-
-                                    // Amount & Status Badge column
-                                    Column(horizontalAlignment = Alignment.End) {
-                                        Text(
-                                            text = "PKR %.2f".format(txn.requestedAmount),
-                                            fontSize = 14.sp,
-                                            fontWeight = FontWeight.Black,
-                                            color = MaterialTheme.colorScheme.onSurface
-                                        )
-                                        Spacer(modifier = Modifier.height(2.dp))
-                                        Surface(
-                                            shape = RoundedCornerShape(8.dp),
-                                            color = when (txn.status) {
-                                                WithdrawalStatus.PENDING_1_HR -> AccentGold.copy(alpha = 0.15f)
-                                                WithdrawalStatus.REJECTED -> StopRed.copy(alpha = 0.15f)
-                                                else -> BentoEmerald.copy(alpha = 0.15f)
-                                            }
-                                        ) {
-                                            Text(
-                                                text = when (txn.status) {
-                                                    WithdrawalStatus.PENDING_1_HR -> "⏳ Processing"
-                                                    WithdrawalStatus.APPROVED -> "✓ Approved"
-                                                    WithdrawalStatus.COMPLETED -> "✓ Completed"
-                                                    WithdrawalStatus.REJECTED -> "✕ Rejected"
-                                                },
-                                                fontSize = 10.sp,
-                                                fontWeight = FontWeight.ExtraBold,
-                                                color = when (txn.status) {
-                                                    WithdrawalStatus.PENDING_1_HR -> AccentGold
-                                                    WithdrawalStatus.REJECTED -> StopRed
-                                                    else -> BentoEmerald
-                                                },
-                                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                    Button(
+                        onClick = { showWithdrawalHistoryDialog = true },
+                        colors = ButtonDefaults.buttonColors(containerColor = BentoBlue),
+                        shape = RoundedCornerShape(14.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.History,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text("View History", fontSize = 12.sp, fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -648,7 +494,72 @@ fun MineScreen(
             }
         }
 
-        item { Spacer(modifier = Modifier.height(8.dp)) }
+        // 6. Owner Details & Real App Version Footer Card (VERY BOTTOM)
+        item {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(
+                        width = 1.dp,
+                        color = BentoEmerald.copy(alpha = 0.35f),
+                        shape = RoundedCornerShape(22.dp)
+                    )
+                    .testTag("mine_owner_footer_card"),
+                shape = RoundedCornerShape(22.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp, horizontal = 20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Badge,
+                            contentDescription = "Owner Badge",
+                            tint = BentoEmerald,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = "Owner ",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = "Bilal Iqbal Jamali",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Black,
+                                fontFamily = androidx.compose.ui.text.font.FontFamily.Serif,
+                                color = BentoEmerald,
+                                letterSpacing = 0.5.sp
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Text(
+                        text = "Version 1.0.0",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+                    )
+                }
+            }
+        }
+
+        item { Spacer(modifier = Modifier.height(16.dp)) }
     }
 
     // Logout Confirmation Dialog
@@ -696,6 +607,14 @@ fun MineScreen(
                     Text("Close")
                 }
             }
+        )
+    }
+
+    // Withdrawal History Dialog
+    if (showWithdrawalHistoryDialog) {
+        WithdrawalHistoryDialog(
+            withdrawalHistory = uiState.withdrawalHistory,
+            onDismiss = { showWithdrawalHistoryDialog = false }
         )
     }
 }

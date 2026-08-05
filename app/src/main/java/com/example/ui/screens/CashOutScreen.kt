@@ -81,7 +81,9 @@ fun CashOutScreen(
     var selectedMethod by remember { mutableStateOf(PaymentMethod.EASYPAISA) }
     var selectedBank by remember { mutableStateOf("Meezan Bank") }
     var bankDropdownExpanded by remember { mutableStateOf(false) }
-    var accountHolder by remember { mutableStateOf(uiState.userProfile.name) }
+    var accountHolder by remember(uiState.userProfile.name) {
+        mutableStateOf(uiState.userProfile.name.ifBlank { "DataCash User" })
+    }
     var accountNumber by remember { mutableStateOf("03001234567") }
     var amountText by remember { mutableStateOf("500") }
 

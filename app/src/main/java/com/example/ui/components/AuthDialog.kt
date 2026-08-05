@@ -51,6 +51,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -64,6 +65,10 @@ import com.example.ui.theme.BentoEmerald
 import com.example.ui.theme.BentoEmeraldLight
 import com.example.ui.theme.StopRed
 
+import androidx.compose.ui.platform.LocalContext
+import android.util.Log
+import com.google.firebase.FirebaseApp
+
 @Composable
 fun AuthDialog(
     isSignUp: Boolean,
@@ -75,10 +80,16 @@ fun AuthDialog(
     onSignUp: (email: String, pass: String, name: String) -> Unit,
     onGoogleSignIn: () -> Unit = {}
 ) {
+    val context = LocalContext.current
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+    var localValidationError by remember { mutableStateOf<String?>(null) }
+
+    val formattedError = remember(errorMessage, localValidationError) {
+        localValidationError ?: errorMessage
+    }
 
     Dialog(onDismissRequest = onDismiss) {
         Card(
@@ -101,21 +112,15 @@ fun AuthDialog(
                     .padding(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Header Icon & Title
-                Surface(
-                    shape = CircleShape,
-                    color = BentoEmeraldLight,
-                    modifier = Modifier.size(54.dp)
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = Icons.Default.Security,
-                            contentDescription = "Firebase Security",
-                            tint = BentoEmerald,
-                            modifier = Modifier.size(28.dp)
-                        )
-                    }
-                }
+                // Header Logo & Title
+                Image(
+                    painter = safePainterResource(id = R.drawable.datacash_app_logo),
+                    contentDescription = "DataCash Logo",
+                    modifier = Modifier
+                        .size(54.dp)
+                        .clip(RoundedCornerShape(12.dp)),
+                    contentScale = ContentScale.Crop
+                )
 
                 Spacer(modifier = Modifier.height(10.dp))
 
@@ -171,7 +176,7 @@ fun AuthDialog(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Error Banner
-                if (errorMessage != null) {
+                if (formattedError != null) {
                     Surface(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -192,7 +197,7 @@ fun AuthDialog(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = errorMessage,
+                                text = formattedError,
                                 fontSize = 12.sp,
                                 color = StopRed,
                                 fontWeight = FontWeight.Medium
@@ -205,7 +210,10 @@ fun AuthDialog(
                 if (isSignUp) {
                     OutlinedTextField(
                         value = name,
-                        onValueChange = { name = it },
+                        onValueChange = { 
+                            name = it
+                            localValidationError = null
+                        },
                         label = { Text("Full Name") },
                         leadingIcon = {
                             Icon(imageVector = Icons.Default.Person, contentDescription = null)
@@ -221,7 +229,10 @@ fun AuthDialog(
 
                 OutlinedTextField(
                     value = email,
-                    onValueChange = { email = it },
+                    onValueChange = { 
+                        email = it
+                        localValidationError = null
+                    },
                     label = { Text("Email Address") },
                     leadingIcon = {
                         Icon(imageVector = Icons.Default.Email, contentDescription = null)
@@ -238,7 +249,10 @@ fun AuthDialog(
 
                 OutlinedTextField(
                     value = password,
-                    onValueChange = { password = it },
+                    onValueChange = { 
+                        password = it
+                        localValidationError = null
+                    },
                     label = { Text("Password") },
                     leadingIcon = {
                         Icon(imageVector = Icons.Default.Lock, contentDescription = null)
@@ -265,10 +279,35 @@ fun AuthDialog(
                 // Submit Button
                 Button(
                     onClick = {
+                        val trimmedEmail = email.trim()
+                        val trimmedPass = password.trim()
+                        val trimmedName = name.trim()
+
+                        if (trimmedEmail.isEmpty() || !trimmedEmail.contains("@") || !trimmedEmail.contains(".")) {
+                            localValidationError = "Please enter a valid email address."
+                            return@Button
+                        }
+                        if (trimmedPass.length < 6) {
+                            localValidationError = "Password must be at least 6 characters long."
+                            return@Button
+                        }
+                        if (isSignUp && trimmedName.isEmpty()) {
+                            localValidationError = "Please enter your full name."
+                            return@Button
+                        }
+
+                        localValidationError = null
+                        try {
+                            if (FirebaseApp.getApps(context).isEmpty()) {
+                                FirebaseApp.initializeApp(context)
+                            }
+                        } catch (e: Throwable) {
+                            Log.e("AuthDialog", "FirebaseApp initializeApp error: ${e.message}")
+                        }
                         if (isSignUp) {
-                            onSignUp(email, password, name)
+                            onSignUp(trimmedEmail, trimmedPass, trimmedName)
                         } else {
-                            onSignIn(email, password)
+                            onSignIn(trimmedEmail, trimmedPass)
                         }
                     },
                     enabled = !isLoading && email.isNotBlank() && password.isNotBlank(),

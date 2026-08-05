@@ -37,6 +37,7 @@ import com.example.data.NavigationTab
 import com.example.ui.components.AdminDashboardDialog
 import com.example.ui.components.AdminPinDialog
 import com.example.ui.components.AuthDialog
+import com.example.ui.components.ConnectingOverlay
 import com.example.ui.components.BottomNavBar
 import com.example.ui.components.ConfettiBalloonsOverlay
 import com.example.ui.components.HeaderBar
@@ -90,8 +91,8 @@ class MainActivity : ComponentActivity() {
                         onOpenAuth = { isSignUp -> viewModel.openAuthDialog(isSignUp) },
                         onCloseAuth = { viewModel.closeAuthDialog() },
                         onAuthTabSwitch = { isSignUp -> viewModel.setAuthSignUpMode(isSignUp) },
-                        onSignIn = { email, pass -> viewModel.signInWithFirebase(email, pass) },
-                        onSignUp = { email, pass, name -> viewModel.signUpWithFirebase(email, pass, name) },
+                        onSignIn = { email, pass -> viewModel.signInWithFirebase(email, pass, context) },
+                        onSignUp = { email, pass, name -> viewModel.signUpWithFirebase(email, pass, name, context) },
                         onGoogleSignIn = { viewModel.signInWithGoogle() },
                         onNetworkConnectionLost = { viewModel.onNetworkConnectionLost() },
                         onLogout = { viewModel.signOutFirebase() },
@@ -273,6 +274,13 @@ fun DataCashMainApp(
                 onGoogleSignIn = onGoogleSignIn
             )
         }
+
+        // Fullscreen Loading Overlay during Firebase authentication transition
+        ConnectingOverlay(
+            isVisible = uiState.isAuthLoading,
+            title = "Connecting to device...",
+            subtitle = "Authenticating session & syncing initial user state..."
+        )
 
         // Fullscreen Confetti Balloons Overlay when Cashing out (3 SECONDS)
         if (uiState.isCelebrationActive) {

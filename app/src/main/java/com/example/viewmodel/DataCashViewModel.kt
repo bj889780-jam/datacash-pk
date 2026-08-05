@@ -197,63 +197,81 @@ class DataCashViewModel : ViewModel() {
         }
     }
 
-    fun signInWithFirebase(email: String, pass: String) {
+    fun signInWithFirebase(email: String, pass: String, context: android.content.Context? = null) {
         viewModelScope.launch {
             _uiState.update { it.copy(isAuthLoading = true, authErrorMessage = null) }
-            val result = firebaseRepository.signInWithEmail(email, pass)
-            result.onSuccess { user ->
-                _uiState.update {
-                    it.copy(
-                        isAuthLoading = false,
-                        showAuthDialog = false,
-                        isUserLoggedIn = true,
-                        authUserUid = user.uid,
-                        userProfile = UserProfile(
-                            name = user.displayName ?: email.substringBefore("@").capitalize(),
-                            email = user.email ?: email
-                        ),
-                        cloudSyncStatus = "Firebase Connected",
-                        userNoticeMessage = "Welcome back, ${user.email}! Firebase session active."
-                    )
+            try {
+                val result = firebaseRepository.signInWithEmail(email, pass, context)
+                result.onSuccess { user ->
+                    _uiState.update {
+                        it.copy(
+                            isAuthLoading = false,
+                            showAuthDialog = false,
+                            isUserLoggedIn = true,
+                            authUserUid = user.uid,
+                            userProfile = UserProfile(
+                                name = user.displayName ?: email.substringBefore("@").replaceFirstChar { char -> char.uppercase() },
+                                email = user.email ?: email
+                            ),
+                            cloudSyncStatus = "Firebase Connected",
+                            userNoticeMessage = "Welcome back, ${user.email}! Firebase session active."
+                        )
+                    }
+                    loadUserDataFromFirestore(user.uid)
+                }.onFailure { error ->
+                    _uiState.update {
+                        it.copy(
+                            isAuthLoading = false,
+                            authErrorMessage = error.localizedMessage ?: "Sign in failed. Check credentials."
+                        )
+                    }
                 }
-                loadUserDataFromFirestore(user.uid)
-            }.onFailure { error ->
+            } catch (e: Throwable) {
                 _uiState.update {
                     it.copy(
                         isAuthLoading = false,
-                        authErrorMessage = error.localizedMessage ?: "Sign in failed. Check credentials."
+                        authErrorMessage = e.localizedMessage ?: "Sign in failed. Check credentials."
                     )
                 }
             }
         }
     }
 
-    fun signUpWithFirebase(email: String, pass: String, name: String) {
+    fun signUpWithFirebase(email: String, pass: String, name: String, context: android.content.Context? = null) {
         viewModelScope.launch {
             _uiState.update { it.copy(isAuthLoading = true, authErrorMessage = null) }
-            val result = firebaseRepository.signUpWithEmail(email, pass, name)
-            result.onSuccess { user ->
-                val displayName = name.ifBlank { email.substringBefore("@") }
-                _uiState.update {
-                    it.copy(
-                        isAuthLoading = false,
-                        showAuthDialog = false,
-                        isUserLoggedIn = true,
-                        authUserUid = user.uid,
-                        userProfile = UserProfile(
-                            name = displayName,
-                            email = user.email ?: email
-                        ),
-                        cloudSyncStatus = "Firebase Account Created & Synced",
-                        userNoticeMessage = "Firebase account created successfully for $email!"
-                    )
+            try {
+                val result = firebaseRepository.signUpWithEmail(email, pass, name, context)
+                result.onSuccess { user ->
+                    val displayName = name.ifBlank { email.substringBefore("@") }
+                    _uiState.update {
+                        it.copy(
+                            isAuthLoading = false,
+                            showAuthDialog = false,
+                            isUserLoggedIn = true,
+                            authUserUid = user.uid,
+                            userProfile = UserProfile(
+                                name = displayName,
+                                email = user.email ?: email
+                            ),
+                            cloudSyncStatus = "Firebase Account Created & Synced",
+                            userNoticeMessage = "Firebase account created successfully for $email!"
+                        )
+                    }
+                    syncUserDataToFirestore()
+                }.onFailure { error ->
+                    _uiState.update {
+                        it.copy(
+                            isAuthLoading = false,
+                            authErrorMessage = error.localizedMessage ?: "Sign up failed. Ensure email is valid and password is at least 6 characters."
+                        )
+                    }
                 }
-                syncUserDataToFirestore()
-            }.onFailure { error ->
+            } catch (e: Throwable) {
                 _uiState.update {
                     it.copy(
                         isAuthLoading = false,
-                        authErrorMessage = error.localizedMessage ?: "Sign up failed. Ensure email is valid and password is at least 6 characters."
+                        authErrorMessage = e.localizedMessage ?: "Sign up failed. Please try again."
                     )
                 }
             }
@@ -263,6 +281,7 @@ class DataCashViewModel : ViewModel() {
     fun signInWithGoogle() {
         viewModelScope.launch {
             _uiState.update { it.copy(isAuthLoading = true, authErrorMessage = null) }
+            delay(500L) // Fast 500ms transition for Google Auth callback
             val currentEmail = _uiState.value.userProfile.email.ifBlank { "bj889780@gmail.com" }
             _uiState.update {
                 it.copy(
@@ -287,8 +306,10 @@ class DataCashViewModel : ViewModel() {
             it.copy(
                 isUserLoggedIn = false,
                 authUserUid = null,
+                userProfile = UserProfile(name = "Guest User", email = "guest@datacash.pk"),
                 cloudSyncStatus = "Guest Mode",
-                userNoticeMessage = "Logged out from Firebase session."
+                userNoticeMessage = "Logged out from Firebase session.",
+                showAuthDialog = true
             )
         }
     }
