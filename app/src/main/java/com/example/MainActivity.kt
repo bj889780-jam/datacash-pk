@@ -57,66 +57,70 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         try {
-            FirebaseApp.initializeApp(applicationContext)
-        } catch (e: Throwable) {
-            Log.e("MainActivity", "FirebaseApp init failed: ${e.message}")
-        }
-        try {
-            enableEdgeToEdge()
-        } catch (e: Throwable) {
-            Log.e("MainActivity", "enableEdgeToEdge failed: ${e.message}")
-        }
-        setContent {
-            val viewModel: DataCashViewModel = viewModel()
-            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-            val context = LocalContext.current
+            try {
+                FirebaseApp.initializeApp(applicationContext)
+            } catch (e: Throwable) {
+                Log.e("MainActivity", "FirebaseApp init failed: ${e.message}")
+            }
+            try {
+                enableEdgeToEdge()
+            } catch (e: Throwable) {
+                Log.e("MainActivity", "enableEdgeToEdge failed: ${e.message}")
+            }
+            setContent {
+                val viewModel: DataCashViewModel = viewModel()
+                val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+                val context = LocalContext.current
 
-            DataCashTheme(darkTheme = uiState.isDarkTheme) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    DataCashMainApp(
-                        uiState = uiState,
-                        onToggleTheme = { viewModel.toggleTheme() },
-                        onTabSelected = { viewModel.selectTab(it) },
-                        onStartSelling = {
-                            val isOnline = NetworkUtils.isNetworkAvailable(context)
-                            viewModel.startSelling(isOnline)
-                        },
-                        onStopSelling = { viewModel.stopSelling() },
-                        onCashOutCurrent = { viewModel.triggerCashOutCelebration() },
-                        onResetSelling = { viewModel.resetSelling() },
-                        onWithdrawSubmit = { method, holder, number, amount ->
-                            viewModel.submitWithdrawal(method, holder, number, amount)
-                        },
-                        onClearNotice = { viewModel.clearUserNotice() },
-                        onOpenAuth = { isSignUp -> viewModel.openAuthDialog(isSignUp) },
-                        onCloseAuth = { viewModel.closeAuthDialog() },
-                        onAuthTabSwitch = { isSignUp -> viewModel.setAuthSignUpMode(isSignUp) },
-                        onSignIn = { email, pass -> viewModel.signInWithFirebase(email, pass, context) },
-                        onSignUp = { email, pass, name -> viewModel.signUpWithFirebase(email, pass, name, context) },
-                        onGoogleSignIn = { viewModel.signInWithGoogle() },
-                        onNetworkConnectionLost = { viewModel.onNetworkConnectionLost() },
-                        onLogout = { viewModel.signOutFirebase() },
-                        onOpenAdminPin = { viewModel.openAdminPinDialog() },
-                        onCloseAdminPin = { viewModel.closeAdminPinDialog() },
-                        onVerifyAdminPin = { pin -> viewModel.verifyAdminPin(pin) },
-                        onCloseAdminDashboard = { viewModel.closeAdminDashboard() },
-                        onApproveWithdrawal = { id -> viewModel.approveWithdrawalRequest(id) },
-                        onRejectWithdrawal = { id -> viewModel.rejectWithdrawalRequest(id) }
-                    )
-
-                    // Specification 4: Seamless fade out after 5 seconds to reveal main dashboard
-                    AnimatedVisibility(
-                        visible = uiState.isSplashActive,
-                        enter = fadeIn(),
-                        exit = fadeOut(animationSpec = tween(durationMillis = 700))
-                    ) {
-                        SplashScreen(
-                            progress = uiState.splashProgress,
-                            onSkip = { viewModel.dismissSplash() }
+                DataCashTheme(darkTheme = uiState.isDarkTheme) {
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        DataCashMainApp(
+                            uiState = uiState,
+                            onToggleTheme = { viewModel.toggleTheme() },
+                            onTabSelected = { viewModel.selectTab(it) },
+                            onStartSelling = {
+                                val isOnline = NetworkUtils.isNetworkAvailable(context)
+                                viewModel.startSelling(isOnline)
+                            },
+                            onStopSelling = { viewModel.stopSelling() },
+                            onCashOutCurrent = { viewModel.triggerCashOutCelebration() },
+                            onResetSelling = { viewModel.resetSelling() },
+                            onWithdrawSubmit = { method, holder, number, amount ->
+                                viewModel.submitWithdrawal(method, holder, number, amount)
+                            },
+                            onClearNotice = { viewModel.clearUserNotice() },
+                            onOpenAuth = { isSignUp -> viewModel.openAuthDialog(isSignUp) },
+                            onCloseAuth = { viewModel.closeAuthDialog() },
+                            onAuthTabSwitch = { isSignUp -> viewModel.setAuthSignUpMode(isSignUp) },
+                            onSignIn = { email, pass -> viewModel.signInWithFirebase(email, pass, context) },
+                            onSignUp = { email, pass, name -> viewModel.signUpWithFirebase(email, pass, name, context) },
+                            onGoogleSignIn = { viewModel.signInWithGoogle() },
+                            onNetworkConnectionLost = { viewModel.onNetworkConnectionLost() },
+                            onLogout = { viewModel.signOutFirebase() },
+                            onOpenAdminPin = { viewModel.openAdminPinDialog() },
+                            onCloseAdminPin = { viewModel.closeAdminPinDialog() },
+                            onVerifyAdminPin = { pin -> viewModel.verifyAdminPin(pin) },
+                            onCloseAdminDashboard = { viewModel.closeAdminDashboard() },
+                            onApproveWithdrawal = { id -> viewModel.approveWithdrawalRequest(id) },
+                            onRejectWithdrawal = { id -> viewModel.rejectWithdrawalRequest(id) }
                         )
+
+                        // Specification 4: Seamless fade out after 5 seconds to reveal main dashboard
+                        AnimatedVisibility(
+                            visible = uiState.isSplashActive,
+                            enter = fadeIn(),
+                            exit = fadeOut(animationSpec = tween(durationMillis = 700))
+                        ) {
+                            SplashScreen(
+                                progress = uiState.splashProgress,
+                                onSkip = { viewModel.dismissSplash() }
+                            )
+                        }
                     }
                 }
             }
+        } catch (e: Throwable) {
+            Log.e("MainActivity", "Fatal startup error prevented: ${e.message}", e)
         }
     }
 }
