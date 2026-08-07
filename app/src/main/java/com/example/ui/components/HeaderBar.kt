@@ -70,7 +70,7 @@ fun HeaderBar(
                 modifier = Modifier.weight(1f)
             ) {
                 Image(
-                    painter = safePainterResource(id = R.drawable.datacash_datacash_app_icon_1785912024891),
+                    painter = safePainterResource(id = R.drawable.datacash_dc_wifi_icon_1786121930105),
                     contentDescription = "DataCash PK Logo",
                     modifier = Modifier
                         .size(32.dp)
