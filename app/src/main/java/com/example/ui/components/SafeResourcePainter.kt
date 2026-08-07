@@ -47,3 +47,29 @@ fun safePainterResource(
         else -> fallbackPainter
     }
 }
+
+@Composable
+fun safeAssetPainterResource(
+    assetPath: String,
+    @DrawableRes fallbackDrawableId: Int = 0,
+    fallbackIcon: ImageVector = Icons.Default.AccountBalanceWallet
+): Painter {
+    val context = LocalContext.current
+    val fallbackPainter = safePainterResource(id = fallbackDrawableId, fallbackIcon = fallbackIcon)
+    val cleanPath = assetPath.removePrefix("assets/").removePrefix("/")
+    val assetPainter = remember(cleanPath, context) {
+        try {
+            context.assets.open(cleanPath).use { inputStream ->
+                val bitmap = android.graphics.BitmapFactory.decodeStream(inputStream)
+                if (bitmap != null) {
+                    BitmapPainter(bitmap.asImageBitmap())
+                } else null
+            }
+        } catch (e: Throwable) {
+            Log.w("SafeResourcePainter", "Error loading asset $cleanPath: ${e.message}")
+            null
+        }
+    }
+    return assetPainter ?: fallbackPainter
+}
+

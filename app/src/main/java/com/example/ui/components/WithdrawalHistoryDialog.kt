@@ -189,7 +189,10 @@ fun WithdrawalHistoryDialog(
                                             when (txn.paymentMethod) {
                                                 PaymentMethod.EASYPAISA -> {
                                                     Image(
-                                                        painter = safePainterResource(id = R.drawable.ic_easypaisa_logo),
+                                                        painter = safeAssetPainterResource(
+                                                            assetPath = "assets/easypaisa.png",
+                                                            fallbackDrawableId = R.drawable.ic_easypaisa_logo
+                                                        ),
                                                         contentDescription = "EasyPaisa Logo",
                                                         modifier = Modifier.fillMaxSize(),
                                                         contentScale = ContentScale.Fit
@@ -197,7 +200,10 @@ fun WithdrawalHistoryDialog(
                                                 }
                                                 PaymentMethod.JAZZCASH -> {
                                                     Image(
-                                                        painter = safePainterResource(id = R.drawable.ic_jazzcash_logo),
+                                                        painter = safeAssetPainterResource(
+                                                            assetPath = "assets/jazzcash.png",
+                                                            fallbackDrawableId = R.drawable.ic_jazzcash_logo
+                                                        ),
                                                         contentDescription = "JazzCash Logo",
                                                         modifier = Modifier.fillMaxSize(),
                                                         contentScale = ContentScale.Fit

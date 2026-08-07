@@ -62,6 +62,7 @@ import androidx.compose.ui.unit.sp
 import com.example.R
 import com.example.data.PaymentMethod
 import com.example.ui.components.safePainterResource
+import com.example.ui.components.safeAssetPainterResource
 import com.example.viewmodel.DataCashUiState
 import com.example.ui.theme.AccentGold
 import com.example.ui.theme.ActiveYellow
@@ -222,7 +223,10 @@ fun CashOutScreen(
                                         when (method) {
                                             PaymentMethod.EASYPAISA -> {
                                                 Image(
-                                                    painter = safePainterResource(id = R.drawable.ic_easypaisa_logo),
+                                                    painter = safeAssetPainterResource(
+                                                        assetPath = "assets/easypaisa.png",
+                                                        fallbackDrawableId = R.drawable.ic_easypaisa_logo
+                                                    ),
                                                     contentDescription = "EasyPaisa Official Logo",
                                                     modifier = Modifier.fillMaxSize(),
                                                     contentScale = ContentScale.Fit
@@ -230,7 +234,10 @@ fun CashOutScreen(
                                             }
                                             PaymentMethod.JAZZCASH -> {
                                                 Image(
-                                                    painter = safePainterResource(id = R.drawable.ic_jazzcash_logo),
+                                                    painter = safeAssetPainterResource(
+                                                        assetPath = "assets/jazzcash.png",
+                                                        fallbackDrawableId = R.drawable.ic_jazzcash_logo
+                                                    ),
                                                     contentDescription = "JazzCash Official Logo",
                                                     modifier = Modifier.fillMaxSize(),
                                                     contentScale = ContentScale.Fit
