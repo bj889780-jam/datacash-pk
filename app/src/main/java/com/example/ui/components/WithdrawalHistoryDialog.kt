@@ -171,17 +171,19 @@ fun WithdrawalHistoryDialog(
                                     // Payment Method Brand Thumbnail Badge
                                     Surface(
                                         modifier = Modifier
-                                            .size(40.dp)
+                                            .size(width = 46.dp, height = 40.dp)
                                             .border(
                                                 width = 1.dp,
                                                 color = Color(txn.paymentMethod.brandColorHex).copy(alpha = 0.4f),
-                                                shape = CircleShape
+                                                shape = RoundedCornerShape(10.dp)
                                             ),
-                                        shape = CircleShape,
+                                        shape = RoundedCornerShape(10.dp),
                                         color = Color.White
                                     ) {
                                         Box(
-                                            modifier = Modifier.fillMaxSize(),
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .padding(3.dp),
                                             contentAlignment = Alignment.Center
                                         ) {
                                             when (txn.paymentMethod) {
@@ -189,26 +191,23 @@ fun WithdrawalHistoryDialog(
                                                     Image(
                                                         painter = safePainterResource(id = R.drawable.ic_easypaisa_logo),
                                                         contentDescription = "EasyPaisa Logo",
-                                                        modifier = Modifier
-                                                            .fillMaxSize()
-                                                            .clip(CircleShape),
-                                                        contentScale = ContentScale.Crop
+                                                        modifier = Modifier.fillMaxSize(),
+                                                        contentScale = ContentScale.Fit
                                                     )
                                                 }
                                                 PaymentMethod.JAZZCASH -> {
                                                     Image(
                                                         painter = safePainterResource(id = R.drawable.ic_jazzcash_logo),
                                                         contentDescription = "JazzCash Logo",
-                                                        modifier = Modifier
-                                                            .fillMaxSize()
-                                                            .clip(CircleShape),
-                                                        contentScale = ContentScale.Crop
+                                                        modifier = Modifier.fillMaxSize(),
+                                                        contentScale = ContentScale.Fit
                                                     )
                                                 }
                                                 PaymentMethod.BANK_TRANSFER -> {
                                                     Box(
                                                         modifier = Modifier
                                                             .fillMaxSize()
+                                                            .clip(RoundedCornerShape(6.dp))
                                                             .background(Color(txn.paymentMethod.brandColorHex)),
                                                         contentAlignment = Alignment.Center
                                                     ) {

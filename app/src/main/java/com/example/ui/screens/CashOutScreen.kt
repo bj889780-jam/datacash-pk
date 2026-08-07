@@ -203,18 +203,20 @@ fun CashOutScreen(
                             ) {
                                 Surface(
                                     modifier = Modifier
-                                        .size(48.dp)
+                                        .size(width = 54.dp, height = 48.dp)
                                         .border(
                                             width = 1.dp,
-                                            color = if (isSelected) brandColor.copy(alpha = 0.5f) else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
-                                            shape = CircleShape
+                                            color = if (isSelected) brandColor.copy(alpha = 0.6f) else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                                            shape = RoundedCornerShape(12.dp)
                                         ),
-                                    shape = CircleShape,
+                                    shape = RoundedCornerShape(12.dp),
                                     color = Color.White,
                                     shadowElevation = 2.dp
                                 ) {
                                     Box(
-                                        modifier = Modifier.fillMaxSize(),
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(4.dp),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         when (method) {
@@ -222,26 +224,23 @@ fun CashOutScreen(
                                                 Image(
                                                     painter = safePainterResource(id = R.drawable.ic_easypaisa_logo),
                                                     contentDescription = "EasyPaisa Official Logo",
-                                                    modifier = Modifier
-                                                        .fillMaxSize()
-                                                        .clip(CircleShape),
-                                                    contentScale = ContentScale.Crop
+                                                    modifier = Modifier.fillMaxSize(),
+                                                    contentScale = ContentScale.Fit
                                                 )
                                             }
                                             PaymentMethod.JAZZCASH -> {
                                                 Image(
                                                     painter = safePainterResource(id = R.drawable.ic_jazzcash_logo),
                                                     contentDescription = "JazzCash Official Logo",
-                                                    modifier = Modifier
-                                                        .fillMaxSize()
-                                                        .clip(CircleShape),
-                                                    contentScale = ContentScale.Crop
+                                                    modifier = Modifier.fillMaxSize(),
+                                                    contentScale = ContentScale.Fit
                                                 )
                                             }
                                             PaymentMethod.BANK_TRANSFER -> {
                                                 Box(
                                                     modifier = Modifier
                                                         .fillMaxSize()
+                                                        .clip(RoundedCornerShape(8.dp))
                                                         .background(brandColor),
                                                     contentAlignment = Alignment.Center
                                                 ) {
