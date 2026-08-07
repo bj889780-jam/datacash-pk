@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
@@ -92,16 +93,22 @@ fun AdminDashboardDialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
-        Surface(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .statusBarsPadding()
-                .padding(12.dp)
-                .clip(RoundedCornerShape(24.dp))
-                .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(24.dp))
-                .testTag("admin_dashboard_screen"),
-            color = MaterialTheme.colorScheme.background
+                .background(Color(0xFF0F172A))
         ) {
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .statusBarsPadding()
+                    .navigationBarsPadding()
+                    .padding(12.dp)
+                    .clip(RoundedCornerShape(24.dp))
+                    .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(24.dp))
+                    .testTag("admin_dashboard_screen"),
+                color = Color(0xFF0F172A)
+            ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -291,6 +298,7 @@ fun AdminDashboardDialog(
             }
         }
     }
+}
 }
 
 @Composable

@@ -12,6 +12,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -376,11 +377,12 @@ fun HomeScreen(
                                 disabledContentColor = Color.Black.copy(alpha = 0.35f)
                             ),
                             shape = RoundedCornerShape(16.dp),
+                            contentPadding = PaddingValues(horizontal = 2.dp, vertical = 0.dp),
                             modifier = Modifier
                                 .weight(1f)
                                 .height(46.dp)
                         ) {
-                            Text(text = "START", fontSize = 12.sp, fontWeight = FontWeight.ExtraBold)
+                            Text(text = "START", fontSize = 12.sp, fontWeight = FontWeight.ExtraBold, maxLines = 1, softWrap = false)
                         }
 
                         // Stop Button (Red)
@@ -394,11 +396,12 @@ fun HomeScreen(
                                 disabledContentColor = Color.Gray
                             ),
                             shape = RoundedCornerShape(16.dp),
+                            contentPadding = PaddingValues(horizontal = 2.dp, vertical = 0.dp),
                             modifier = Modifier
                                 .weight(1f)
                                 .height(46.dp)
                         ) {
-                            Text(text = "STOP", fontSize = 12.sp, fontWeight = FontWeight.ExtraBold)
+                            Text(text = "STOP", fontSize = 12.sp, fontWeight = FontWeight.ExtraBold, maxLines = 1, softWrap = false)
                         }
 
                         // Cash Button (Green) - Triggers celebration overlay!
@@ -412,17 +415,19 @@ fun HomeScreen(
                                 disabledContentColor = Color.White.copy(alpha = 0.5f)
                             ),
                             shape = RoundedCornerShape(16.dp),
+                            contentPadding = PaddingValues(horizontal = 2.dp, vertical = 0.dp),
                             modifier = Modifier
                                 .weight(1f)
                                 .height(46.dp)
                         ) {
-                            Text(text = "CASH", fontSize = 12.sp, fontWeight = FontWeight.ExtraBold)
+                            Text(text = "CASH", fontSize = 12.sp, fontWeight = FontWeight.ExtraBold, maxLines = 1, softWrap = false)
                         }
 
                         // Reset Button (Icon Pill)
                         OutlinedButton(
                             onClick = onResetSelling,
                             shape = RoundedCornerShape(16.dp),
+                            contentPadding = PaddingValues(horizontal = 2.dp, vertical = 0.dp),
                             modifier = Modifier
                                 .weight(0.7f)
                                 .height(46.dp)

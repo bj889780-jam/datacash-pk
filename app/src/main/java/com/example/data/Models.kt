@@ -6,7 +6,7 @@ import java.util.Locale
 
 data class UserProfile(
     val name: String = "Bilal Iqbal Jamali",
-    val email: String = "bj889780@gmail.com",
+    val email: String = "support@datacash.pk",
     val ownerTag: String = "Owner: Bilal Iqbal Jamali",
     val isVerified: Boolean = true
 ) {

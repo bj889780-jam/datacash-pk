@@ -282,7 +282,7 @@ class DataCashViewModel : ViewModel() {
         viewModelScope.launch {
             _uiState.update { it.copy(isAuthLoading = true, authErrorMessage = null) }
             delay(500L) // Fast 500ms transition for Google Auth callback
-            val currentEmail = _uiState.value.userProfile.email.ifBlank { "bj889780@gmail.com" }
+            val currentEmail = _uiState.value.userProfile.email.ifBlank { "support@datacash.pk" }
             _uiState.update {
                 it.copy(
                     isAuthLoading = false,

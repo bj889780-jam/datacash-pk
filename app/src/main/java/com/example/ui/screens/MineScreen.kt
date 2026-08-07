@@ -1,5 +1,6 @@
 package com.example.ui.screens
 
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -54,6 +55,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import com.example.R
 import com.example.data.PaymentMethod
@@ -84,6 +86,7 @@ fun MineScreen(
     onOpenAdminPin: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     var showLogoutDialog by remember { mutableStateOf(false) }
     var showHelpDialog by remember { mutableStateOf(false) }
     var showWithdrawalHistoryDialog by remember { mutableStateOf(false) }
@@ -397,17 +400,28 @@ fun MineScreen(
                 ) {
                     Icon(imageVector = Icons.Default.HelpOutline, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text(text = "WhatsApp Support", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    Text(text = "Support", fontSize = 12.sp, fontWeight = FontWeight.Bold)
                 }
 
                 OutlinedButton(
-                    onClick = { },
+                    onClick = {
+                        try {
+                            val sendIntent = Intent(Intent.ACTION_SEND).apply {
+                                putExtra(Intent.EXTRA_TEXT, "Earn daily passive money with DataCash PK! Download now: https://datacash.pk")
+                                type = "text/plain"
+                            }
+                            val shareIntent = Intent.createChooser(sendIntent, "Share DataCash PK")
+                            context.startActivity(shareIntent)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    },
                     shape = RoundedCornerShape(16.dp),
                     modifier = Modifier.weight(1f)
                 ) {
                     Icon(imageVector = Icons.Default.Share, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text(text = "Share & Earn", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    Text(text = "Share", fontSize = 12.sp, fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -587,24 +601,46 @@ fun MineScreen(
         )
     }
 
-    // Help Dialog
+    // Help/Support Dialog
     if (showHelpDialog) {
         AlertDialog(
             onDismissRequest = { showHelpDialog = false },
-            title = { Text("24/7 Official Support") },
+            title = { Text("24/7 Official Support", fontWeight = FontWeight.Bold) },
             text = {
                 Column {
-                    Text(text = "DataCash PK Support Team")
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(text = "DataCash PK Support Desk", fontWeight = FontWeight.SemiBold)
+                    Spacer(modifier = Modifier.height(6.dp))
                     Text(text = "Owner: Bilal Iqbal Jamali", fontWeight = FontWeight.Bold, color = BentoEmerald)
-                    Text(text = "Email: bj889780@gmail.com")
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "All withdrawal payouts are processed within 1 hour guaranteed.")
+                    Text(text = "All withdrawal payouts are processed within 1 hour guaranteed.", fontSize = 13.sp)
                 }
             },
             confirmButton = {
-                Button(onClick = { showHelpDialog = false }, colors = ButtonDefaults.buttonColors(containerColor = BentoEmerald)) {
-                    Text("Close")
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedButton(
+                        onClick = {
+                            try {
+                                val intent = Intent(Intent.ACTION_SENDTO).apply {
+                                    data = android.net.Uri.parse("mailto:support@datacash.pk")
+                                    putExtra(Intent.EXTRA_SUBJECT, "DataCash PK Support Inquiry")
+                                }
+                                context.startActivity(Intent.createChooser(intent, "Contact Support"))
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                    ) {
+                        Text("Contact Support")
+                    }
+                    Button(
+                        onClick = { showHelpDialog = false },
+                        colors = ButtonDefaults.buttonColors(containerColor = BentoEmerald)
+                    ) {
+                        Text("Close")
+                    }
                 }
             }
         )
