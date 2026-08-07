@@ -191,9 +191,8 @@ fun WithdrawalHistoryDialog(
                                                         contentDescription = "EasyPaisa Logo",
                                                         modifier = Modifier
                                                             .fillMaxSize()
-                                                            .padding(2.dp)
                                                             .clip(CircleShape),
-                                                        contentScale = ContentScale.Fit
+                                                        contentScale = ContentScale.Crop
                                                     )
                                                 }
                                                 PaymentMethod.JAZZCASH -> {
@@ -202,9 +201,8 @@ fun WithdrawalHistoryDialog(
                                                         contentDescription = "JazzCash Logo",
                                                         modifier = Modifier
                                                             .fillMaxSize()
-                                                            .padding(2.dp)
                                                             .clip(CircleShape),
-                                                        contentScale = ContentScale.Fit
+                                                        contentScale = ContentScale.Crop
                                                     )
                                                 }
                                                 PaymentMethod.BANK_TRANSFER -> {

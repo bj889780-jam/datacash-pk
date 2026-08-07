@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -27,6 +28,19 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -99,6 +113,7 @@ class MainActivity : ComponentActivity() {
                             onWithdrawSubmit = { method, holder, number, amount ->
                                 viewModel.submitWithdrawal(method, holder, number, amount)
                             },
+                            onConfirmWithdrawal = { viewModel.confirmPendingWithdrawal() },
                             onClearNotice = { viewModel.clearUserNotice() },
                             onOpenAuth = { isSignUp -> viewModel.openAuthDialog(isSignUp) },
                             onCloseAuth = { viewModel.closeAuthDialog() },
@@ -146,6 +161,7 @@ fun DataCashMainApp(
     onCashOutCurrent: () -> Unit,
     onResetSelling: () -> Unit,
     onWithdrawSubmit: (com.example.data.PaymentMethod, String, String, String) -> Boolean,
+    onConfirmWithdrawal: () -> Unit,
     onClearNotice: () -> Unit,
     onOpenAuth: (Boolean) -> Unit,
     onCloseAuth: () -> Unit,
@@ -163,6 +179,7 @@ fun DataCashMainApp(
     onRejectWithdrawal: (String) -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val activity = context as? Activity
 
@@ -191,12 +208,6 @@ fun DataCashMainApp(
         }
     }
 
-    LaunchedEffect(uiState.userNoticeMessage) {
-        uiState.userNoticeMessage?.let { msg ->
-            snackbarHostState.showSnackbar(msg)
-        }
-    }
-
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -214,7 +225,35 @@ fun DataCashMainApp(
                     onTabSelected = onTabSelected
                 )
             },
-            snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+            snackbarHost = {
+                SnackbarHost(hostState = snackbarHostState) { snackbarData ->
+                    Card(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp, vertical = 12.dp)
+                            .fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFF047857) // Dark Green
+                        ),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 14.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = snackbarData.visuals.message,
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 13.sp,
+                                lineHeight = 18.sp
+                            )
+                        }
+                    }
+                }
+            }
         ) { innerPadding ->
             Box(
                 modifier = Modifier
@@ -306,18 +345,39 @@ fun DataCashMainApp(
 
         // Dialog alert for user notice if active
         uiState.userNoticeMessage?.let { notice ->
+            val isPendingConfirmation = uiState.pendingWithdrawalRecord != null
+
             AlertDialog(
                 onDismissRequest = onClearNotice,
-                title = { Text("DataCash PK Notification") },
+                title = { Text("DataCash PK Notification", fontWeight = FontWeight.Bold) },
                 text = { Text(notice) },
                 confirmButton = {
                     Button(
-                        onClick = onClearNotice,
+                        onClick = {
+                            if (isPendingConfirmation) {
+                                onConfirmWithdrawal()
+                                scope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        message = "⚡ Request Successful! Your withdrawal is pending approval. You can check the status in your cash-out history.",
+                                        duration = SnackbarDuration.Short
+                                    )
+                                }
+                            } else {
+                                onClearNotice()
+                            }
+                        },
                         colors = ButtonDefaults.buttonColors(containerColor = BentoEmerald)
                     ) {
-                        Text("OK")
+                        Text("OK", fontWeight = FontWeight.Bold)
                     }
-                }
+                },
+                dismissButton = if (isPendingConfirmation) {
+                    @Composable {
+                        OutlinedButton(onClick = onClearNotice) {
+                            Text("Cancel", fontWeight = FontWeight.Bold)
+                        }
+                    }
+                } else null
             )
         }
     }

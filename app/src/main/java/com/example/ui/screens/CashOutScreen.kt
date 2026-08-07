@@ -203,14 +203,15 @@ fun CashOutScreen(
                             ) {
                                 Surface(
                                     modifier = Modifier
-                                        .size(44.dp)
+                                        .size(48.dp)
                                         .border(
                                             width = 1.dp,
-                                            color = if (isSelected) brandColor.copy(alpha = 0.5f) else MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                                            color = if (isSelected) brandColor.copy(alpha = 0.5f) else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
                                             shape = CircleShape
                                         ),
                                     shape = CircleShape,
-                                    color = Color.White
+                                    color = Color.White,
+                                    shadowElevation = 2.dp
                                 ) {
                                     Box(
                                         modifier = Modifier.fillMaxSize(),
@@ -223,9 +224,8 @@ fun CashOutScreen(
                                                     contentDescription = "EasyPaisa Official Logo",
                                                     modifier = Modifier
                                                         .fillMaxSize()
-                                                        .padding(3.dp)
                                                         .clip(CircleShape),
-                                                    contentScale = ContentScale.Fit
+                                                    contentScale = ContentScale.Crop
                                                 )
                                             }
                                             PaymentMethod.JAZZCASH -> {
@@ -234,9 +234,8 @@ fun CashOutScreen(
                                                     contentDescription = "JazzCash Official Logo",
                                                     modifier = Modifier
                                                         .fillMaxSize()
-                                                        .padding(3.dp)
                                                         .clip(CircleShape),
-                                                    contentScale = ContentScale.Fit
+                                                    contentScale = ContentScale.Crop
                                                 )
                                             }
                                             PaymentMethod.BANK_TRANSFER -> {
@@ -250,7 +249,7 @@ fun CashOutScreen(
                                                         imageVector = Icons.Default.AccountBalance,
                                                         contentDescription = "Bank Transfer Logo",
                                                         tint = Color.White,
-                                                        modifier = Modifier.size(22.dp)
+                                                        modifier = Modifier.size(24.dp)
                                                     )
                                                 }
                                             }
@@ -265,13 +264,6 @@ fun CashOutScreen(
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurface
-                                )
-
-                                Text(
-                                    text = method.badgeText,
-                                    fontSize = 10.sp,
-                                    color = brandColor,
-                                    fontWeight = FontWeight.Medium
                                 )
                             }
                         }

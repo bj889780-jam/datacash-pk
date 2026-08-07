@@ -114,7 +114,7 @@ fun AuthDialog(
             ) {
                 // Header Logo & Title
                 Image(
-                    painter = safePainterResource(id = R.drawable.datacash_app_logo),
+                    painter = safePainterResource(id = R.drawable.datacash_datacash_app_icon_1785912024891),
                     contentDescription = "DataCash Logo",
                     modifier = Modifier
                         .size(54.dp)

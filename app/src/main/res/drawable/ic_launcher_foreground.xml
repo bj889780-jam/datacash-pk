@@ -3,6 +3,6 @@
     <item
         android:width="66dp"
         android:height="66dp"
-        android:drawable="@drawable/datacash_app_logo"
+        android:drawable="@drawable/datacash_datacash_app_icon_1785912024891"
         android:gravity="center" />
 </layer-list>

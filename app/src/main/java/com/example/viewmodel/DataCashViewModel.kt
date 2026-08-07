@@ -96,7 +96,8 @@ data class DataCashUiState(
             timestamp = "28 Jul 2026, 02:15 PM"
         )
     ),
-    val userNoticeMessage: String? = null
+    val userNoticeMessage: String? = null,
+    val pendingWithdrawalRecord: WithdrawalRecord? = null
 ) {
     val currentWidgetEarnings: Double
         get() = currentWidgetMbSold / 3.0
@@ -502,10 +503,24 @@ class DataCashViewModel : ViewModel() {
 
         _uiState.update { state ->
             state.copy(
+                pendingWithdrawalRecord = record,
+                userNoticeMessage = "You are requesting a withdrawal of PKR %.2f. Net Receiving: PKR %.2f (after PKR 50 fee). Click OK to confirm and submit your request.".format(amount, record.netAmount)
+            )
+        }
+        return true
+    }
+
+    fun confirmPendingWithdrawal() {
+        val record = _uiState.value.pendingWithdrawalRecord ?: return
+        val amount = record.requestedAmount
+
+        _uiState.update { state ->
+            state.copy(
                 availableBalance = state.availableBalance - amount,
                 totalWithdrawn = state.totalWithdrawn + amount,
                 withdrawalHistory = listOf(record) + state.withdrawalHistory,
-                userNoticeMessage = "Withdrawal request of PKR %.2f submitted successfully! (Net Receiving: PKR %.2f after PKR 50 fee)".format(amount, record.netAmount)
+                pendingWithdrawalRecord = null,
+                userNoticeMessage = null
             )
         }
 
@@ -517,11 +532,10 @@ class DataCashViewModel : ViewModel() {
                 syncUserDataToFirestore()
             }
         }
-        return true
     }
 
     fun clearUserNotice() {
-        _uiState.update { it.copy(userNoticeMessage = null) }
+        _uiState.update { it.copy(userNoticeMessage = null, pendingWithdrawalRecord = null) }
     }
 
     // Admin Dashboard Functions (Owner: Bilal Iqbal Jamali)
