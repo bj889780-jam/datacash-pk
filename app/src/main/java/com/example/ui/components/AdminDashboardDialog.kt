@@ -61,6 +61,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.example.R
 import com.example.data.PaymentMethod
 import com.example.data.WithdrawalRecord
 import com.example.data.WithdrawalStatus
@@ -344,13 +345,46 @@ fun AdminWithdrawalCard(
                         shape = RoundedCornerShape(8.dp),
                         color = Color(txn.paymentMethod.brandColorHex).copy(alpha = 0.15f)
                     ) {
-                        Text(
-                            text = txn.paymentMethod.title,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = Color(txn.paymentMethod.brandColorHex),
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                        )
+                        ) {
+                            when (txn.paymentMethod) {
+                                PaymentMethod.EASYPAISA -> {
+                                    androidx.compose.foundation.Image(
+                                        painter = safeAssetPainterResource(
+                                            assetPath = "assets/easypaisa.png",
+                                            fallbackDrawableId = R.drawable.ic_easypaisa_logo
+                                        ),
+                                        contentDescription = "EasyPaisa Logo",
+                                        modifier = Modifier
+                                            .size(16.dp)
+                                            .padding(end = 4.dp),
+                                        contentScale = androidx.compose.ui.layout.ContentScale.Fit
+                                    )
+                                }
+                                PaymentMethod.JAZZCASH -> {
+                                    androidx.compose.foundation.Image(
+                                        painter = safeAssetPainterResource(
+                                            assetPath = "assets/jazzcash.png",
+                                            fallbackDrawableId = R.drawable.ic_jazzcash_logo
+                                        ),
+                                        contentDescription = "JazzCash Logo",
+                                        modifier = Modifier
+                                            .size(16.dp)
+                                            .padding(end = 4.dp),
+                                        contentScale = androidx.compose.ui.layout.ContentScale.Fit
+                                    )
+                                }
+                                else -> {}
+                            }
+                            Text(
+                                text = txn.paymentMethod.title,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = Color(txn.paymentMethod.brandColorHex)
+                            )
+                        }
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(

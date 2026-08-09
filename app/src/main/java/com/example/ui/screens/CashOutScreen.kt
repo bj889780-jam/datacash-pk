@@ -204,20 +204,20 @@ fun CashOutScreen(
                             ) {
                                 Surface(
                                     modifier = Modifier
-                                        .size(width = 54.dp, height = 48.dp)
+                                        .size(width = 56.dp, height = 40.dp)
                                         .border(
                                             width = 1.dp,
                                             color = if (isSelected) brandColor.copy(alpha = 0.6f) else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
-                                            shape = RoundedCornerShape(12.dp)
+                                            shape = RoundedCornerShape(10.dp)
                                         ),
-                                    shape = RoundedCornerShape(12.dp),
+                                    shape = RoundedCornerShape(10.dp),
                                     color = Color.White,
                                     shadowElevation = 2.dp
                                 ) {
                                     Box(
                                         modifier = Modifier
                                             .fillMaxSize()
-                                            .padding(4.dp),
+                                            .padding(2.dp),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         when (method) {

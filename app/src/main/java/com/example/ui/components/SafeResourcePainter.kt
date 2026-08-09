@@ -55,21 +55,20 @@ fun safeAssetPainterResource(
     fallbackIcon: ImageVector = Icons.Default.AccountBalanceWallet
 ): Painter {
     val context = LocalContext.current
-    val fallbackPainter = safePainterResource(id = fallbackDrawableId, fallbackIcon = fallbackIcon)
     val cleanPath = assetPath.removePrefix("assets/").removePrefix("/")
     val assetPainter = remember(cleanPath, context) {
         try {
-            context.assets.open(cleanPath).use { inputStream ->
-                val bitmap = android.graphics.BitmapFactory.decodeStream(inputStream)
-                if (bitmap != null) {
-                    BitmapPainter(bitmap.asImageBitmap())
-                } else null
-            }
+            val bytes = context.assets.open(cleanPath).use { it.readBytes() }
+            val bitmap = android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+            if (bitmap != null) {
+                BitmapPainter(bitmap.asImageBitmap())
+            } else null
         } catch (e: Throwable) {
             Log.w("SafeResourcePainter", "Error loading asset $cleanPath: ${e.message}")
             null
         }
     }
+    val fallbackPainter = safePainterResource(id = fallbackDrawableId, fallbackIcon = fallbackIcon)
     return assetPainter ?: fallbackPainter
 }
 
