@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="120dp"
-    android:height="120dp"
-    android:viewportWidth="120"
-    android:viewportHeight="120">
-    <!-- Dark Charcoal rounded square -->
+    android:width="100dp"
+    android:height="100dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <!-- Dark Charcoal rounded circle -->
     <path
         android:fillColor="#1F1A1C"
-        android:pathData="M20,0 L100,0 A20,20 0 0,1 120,20 L120,100 A20,20 0 0,1 100,120 L20,120 A20,20 0 0,1 0,100 L0,20 A20,20 0 0,1 20,0 Z" />
-    <!-- White background circle -->
+        android:pathData="M50,0 A50,50 0 1,1 50,100 A50,50 0 1,1 50,0 Z" />
+    <!-- White inner circle -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M60,15 A45,45 0 1,1 60,105 A45,45 0 1,1 60,15 Z" />
+        android:pathData="M50,10 A40,40 0 1,1 50,90 A40,40 0 1,1 50,10 Z" />
     <!-- JazzCash Left Golden Yellow Swoosh (#FFC107) -->
     <path
         android:fillColor="#FFC107"
-        android:pathData="M57.8,34.5 C50.2,34.5 44.2,42 44.2,54 C44.2,69 54.8,79.5 65.2,81 C54.8,78.8 50.2,66 54,52.5 C56.2,45 60,39 57.8,34.5 Z" />
+        android:pathData="M48.2,27 C41,27 35.3,34.2 35.3,45.6 C35.3,59.8 45.4,69.8 55.3,71.2 C45.4,69.1 41,57 44.6,44.1 C46.7,37 50.3,31.3 48.2,27 Z" />
     <!-- JazzCash Right Vibrant Red Swoosh (#ED1C24) -->
     <path
         android:fillColor="#ED1C24"
-        android:pathData="M60,34.5 C67.5,34.5 78,39 80.2,48 C82.5,61.5 67.5,76.5 54,81 C63,77.2 70.5,67.5 70.5,56.2 C70.5,45 65.2,34.5 60,34.5 Z" />
+        android:pathData="M50.3,27 C57.4,27 67.4,31.3 69.5,39.8 C71.7,52.6 57.4,66.9 44.6,71.2 C53.2,67.6 60.3,58.3 60.3,47.6 C60.3,37 55.3,27 50.3,27 Z" />
 </vector>

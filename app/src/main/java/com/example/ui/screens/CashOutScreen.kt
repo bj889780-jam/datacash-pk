@@ -201,58 +201,63 @@ fun CashOutScreen(
                                     .padding(vertical = 14.dp, horizontal = 8.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Surface(
+                                Box(
                                     modifier = Modifier
-                                        .size(width = 56.dp, height = 40.dp)
-                                        .border(
-                                            width = 1.dp,
-                                            color = if (isSelected) brandColor.copy(alpha = 0.6f) else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
-                                            shape = RoundedCornerShape(10.dp)
-                                        ),
-                                    shape = RoundedCornerShape(10.dp),
-                                    color = Color.White,
-                                    shadowElevation = 2.dp
+                                        .height(40.dp)
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 2.dp),
+                                    contentAlignment = Alignment.Center
                                 ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .padding(2.dp),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        when (method) {
-                                            PaymentMethod.EASYPAISA -> {
-                                                Image(
-                                                    painter = safePainterResource(
-                                                        id = R.drawable.ic_easypaisa_vector
-                                                    ),
-                                                    contentDescription = "EasyPaisa Official Logo",
-                                                    modifier = Modifier.fillMaxSize(),
-                                                    contentScale = ContentScale.Fit
-                                                )
-                                            }
-                                            PaymentMethod.JAZZCASH -> {
-                                                Image(
-                                                    painter = safePainterResource(
-                                                        id = R.drawable.ic_jazzcash_vector
-                                                    ),
-                                                    contentDescription = "JazzCash Official Logo",
-                                                    modifier = Modifier.fillMaxSize(),
-                                                    contentScale = ContentScale.Fit
-                                                )
-                                            }
-                                            PaymentMethod.BANK_TRANSFER -> {
-                                                Box(
-                                                    modifier = Modifier
-                                                        .fillMaxSize()
-                                                        .clip(RoundedCornerShape(8.dp))
-                                                        .background(brandColor),
-                                                    contentAlignment = Alignment.Center
+                                    when (method) {
+                                        PaymentMethod.EASYPAISA -> {
+                                            Image(
+                                                painter = safePainterResource(
+                                                    id = R.drawable.ic_easypaisa_logo
+                                                ),
+                                                contentDescription = "EasyPaisa Official Logo",
+                                                modifier = Modifier
+                                                    .fillMaxSize()
+                                                    .clip(RoundedCornerShape(10.dp)),
+                                                contentScale = ContentScale.Fit
+                                            )
+                                        }
+                                        PaymentMethod.JAZZCASH -> {
+                                            Image(
+                                                painter = safePainterResource(
+                                                    id = R.drawable.ic_jazzcash_logo
+                                                ),
+                                                contentDescription = "JazzCash Official Logo",
+                                                modifier = Modifier
+                                                    .fillMaxSize()
+                                                    .clip(RoundedCornerShape(10.dp)),
+                                                contentScale = ContentScale.Fit
+                                            )
+                                        }
+                                        PaymentMethod.BANK_TRANSFER -> {
+                                            Surface(
+                                                modifier = Modifier
+                                                    .fillMaxSize()
+                                                    .clip(RoundedCornerShape(10.dp)),
+                                                shape = RoundedCornerShape(10.dp),
+                                                color = brandColor
+                                            ) {
+                                                Row(
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    horizontalArrangement = Arrangement.Center,
+                                                    modifier = Modifier.fillMaxSize()
                                                 ) {
                                                     Icon(
                                                         imageVector = Icons.Default.AccountBalance,
                                                         contentDescription = "Bank Transfer Logo",
                                                         tint = Color.White,
-                                                        modifier = Modifier.size(24.dp)
+                                                        modifier = Modifier.size(18.dp)
+                                                    )
+                                                    Spacer(modifier = Modifier.width(4.dp))
+                                                    Text(
+                                                        text = "BANK",
+                                                        fontSize = 11.sp,
+                                                        fontWeight = FontWeight.ExtraBold,
+                                                        color = Color.White
                                                     )
                                                 }
                                             }

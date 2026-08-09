@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="120dp"
-    android:height="120dp"
-    android:viewportWidth="120"
-    android:viewportHeight="120">
-    <!-- Green background rounded square -->
+    android:width="100dp"
+    android:height="100dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <!-- Green background circle -->
     <path
         android:fillColor="#00A651"
-        android:pathData="M20,0 L100,0 A20,20 0 0,1 120,20 L120,100 A20,20 0 0,1 100,120 L20,120 A20,20 0 0,1 0,100 L0,20 A20,20 0 0,1 20,0 Z" />
-    <!-- White background circle -->
+        android:pathData="M50,0 A50,50 0 1,1 50,100 A50,50 0 1,1 50,0 Z" />
+    <!-- White inner circle -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M60,15 A45,45 0 1,1 60,105 A45,45 0 1,1 60,15 Z" />
-    <!-- EasyPaisa 'e' top loop (Rich Black) -->
+        android:pathData="M50,10 A40,40 0 1,1 50,90 A40,40 0 1,1 50,10 Z" />
+    <!-- EasyPaisa 'e' top loop (Rich Dark Slate #0F172A) -->
     <path
         android:fillColor="#0F172A"
-        android:pathData="M60,32 C48,32 39,39.5 39,50 C39,59 46.5,65 58.5,65 C67.5,65 75,60.5 78.8,55.3 L69.8,50 C67.5,53 63.8,56 58.5,56 C51,56 47.2,51.5 47.2,47 L78.8,47 C78.8,38 71.2,32 60,32 Z M47.2,41 C48.8,36.5 54,35.8 60,35.8 C66,35.8 69.8,38 69.8,41 L47.2,41 Z" />
+        android:pathData="M50,28 C39.6,28 31.8,34.5 31.8,43.7 C31.8,51.8 38.3,57 48.8,57 C56.6,57 63,53 66.3,48.5 L58.5,43.8 C56.5,46.4 53.3,49 48.8,49 C42.2,49 39,45.1 39,41.2 L66.3,41.2 C66.3,33.3 59.7,28 50,28 Z M39,36.2 C40.4,32.3 45,31.6 50,31.6 C55,31.6 58.3,33.5 58.3,36.2 L39,36.2 Z" />
     <!-- EasyPaisa Green Bottom Swoosh (#00A651) -->
     <path
         android:fillColor="#00A651"
-        android:pathData="M40.5,57.5 C42.8,68.8 51.8,77 63,77 C74.2,77 81.8,69.5 83.2,62 L74.2,60.5 C72.8,65 68.2,68.8 62.2,68.8 C54.8,68.8 48,63.5 46.5,57.5 L40.5,57.5 Z" />
+        android:pathData="M33,50.3 C35,60 42.8,67 52.5,67 C62.2,67 68.8,60.5 70,54 L62.2,52.7 C61,56.5 57,59.8 51.8,59.8 C45.3,59.8 39.5,55.2 38.2,50.3 L33,50.3 Z" />
 </vector>

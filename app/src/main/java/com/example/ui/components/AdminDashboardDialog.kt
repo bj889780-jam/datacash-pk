@@ -356,11 +356,10 @@ fun AdminWithdrawalCard(
                                             id = R.drawable.ic_easypaisa_vector
                                         ),
                                         contentDescription = "EasyPaisa Logo",
-                                        modifier = Modifier
-                                            .size(16.dp)
-                                            .padding(end = 4.dp),
+                                        modifier = Modifier.size(16.dp),
                                         contentScale = androidx.compose.ui.layout.ContentScale.Fit
                                     )
+                                    Spacer(modifier = Modifier.width(4.dp))
                                 }
                                 PaymentMethod.JAZZCASH -> {
                                     androidx.compose.foundation.Image(
@@ -368,11 +367,10 @@ fun AdminWithdrawalCard(
                                             id = R.drawable.ic_jazzcash_vector
                                         ),
                                         contentDescription = "JazzCash Logo",
-                                        modifier = Modifier
-                                            .size(16.dp)
-                                            .padding(end = 4.dp),
+                                        modifier = Modifier.size(16.dp),
                                         contentScale = androidx.compose.ui.layout.ContentScale.Fit
                                     )
+                                    Spacer(modifier = Modifier.width(4.dp))
                                 }
                                 else -> {}
                             }
