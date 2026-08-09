@@ -352,9 +352,8 @@ fun AdminWithdrawalCard(
                             when (txn.paymentMethod) {
                                 PaymentMethod.EASYPAISA -> {
                                     androidx.compose.foundation.Image(
-                                        painter = safeAssetPainterResource(
-                                            assetPath = "assets/easypaisa.png",
-                                            fallbackDrawableId = R.drawable.ic_easypaisa_logo
+                                        painter = safePainterResource(
+                                            id = R.drawable.ic_easypaisa_vector
                                         ),
                                         contentDescription = "EasyPaisa Logo",
                                         modifier = Modifier
@@ -365,9 +364,8 @@ fun AdminWithdrawalCard(
                                 }
                                 PaymentMethod.JAZZCASH -> {
                                     androidx.compose.foundation.Image(
-                                        painter = safeAssetPainterResource(
-                                            assetPath = "assets/jazzcash.png",
-                                            fallbackDrawableId = R.drawable.ic_jazzcash_logo
+                                        painter = safePainterResource(
+                                            id = R.drawable.ic_jazzcash_vector
                                         ),
                                         contentDescription = "JazzCash Logo",
                                         modifier = Modifier

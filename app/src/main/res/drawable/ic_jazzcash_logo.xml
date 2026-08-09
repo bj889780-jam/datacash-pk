@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="80dp"
+    android:viewportWidth="200"
+    android:viewportHeight="80">
+
+    <!-- Background Pill -->
+    <path
+        android:fillColor="#1F1A1C"
+        android:pathData="M16,0 L184,0 A16,16 0 0,1 200,16 L200,64 A16,16 0 0,1 184,80 L16,80 A16,16 0 0,1 0,64 L0,16 A16,16 0 0,1 16,0 Z" />
+
+    <!-- White Circle Badge for JazzCash Swooshes -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M40,16 A24,24 0 1,1 40,64 A24,24 0 1,1 40,16 Z" />
+
+    <!-- JazzCash Left Golden Yellow Swoosh (#FFC107) -->
+    <path
+        android:fillColor="#FFC107"
+        android:pathData="M38.8,26.4 C34.8,26.4 31.6,30.4 31.6,36.8 C31.6,44.8 37.2,50.4 42.8,51.2 C37.2,50 34.8,43.2 36.8,36 C38,32 40,28.8 38.8,26.4 Z" />
+
+    <!-- JazzCash Right Vibrant Red Swoosh (#ED1C24) -->
+    <path
+        android:fillColor="#ED1C24"
+        android:pathData="M40,26.4 C44,26.4 49.6,28.8 50.8,33.6 C52,40.8 44,48.8 36.8,51.2 C41.6,49.2 45.6,44 45.6,38 C45.6,32 42.8,26.4 40,26.4 Z" />
+
+    <!-- Brand Text "JazzCash" -->
+    <!-- 'J' (Red #ED1C24) -->
+    <path
+        android:fillColor="#ED1C24"
+        android:pathData="M68,26 L73,26 L73,46 C73,50 70,52 65,52 C62,52 60,51 58,49 L60,45 C61.5,46.5 63,47.5 65,47.5 C67,47.5 68,46.5 68,45 L68,26 Z" />
+
+    <!-- 'a' (White) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M82,50 C80,50 78,49 77,47 L77,50 L72,50 L72,35 L77,35 L77,38 C78,36 80,35 82,35 C87,35 90,39 90,42.5 C90,47 87,50 82,50 Z M81,39 C78.5,39 77,40.5 77,42.5 C77,44.5 78.5,46 81,46 C83.5,46 85,44.5 85,42.5 C85,40.5 83.5,39 81,39 Z" />
+
+    <!-- 'z' (White) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M93,35 L103,35 L103,39 L97,46 L103,46 L103,50 L92,50 L92,46 L98,39 L93,39 L93,35 Z" />
+
+    <!-- 'z' (White) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M106,35 L116,35 L116,39 L110,46 L116,46 L116,50 L105,50 L105,46 L111,39 L106,39 L106,35 Z" />
+
+    <!-- 'C' (Gold #FFC107) -->
+    <path
+        android:fillColor="#FFC107"
+        android:pathData="M130,34 C128,30 124,28 119,28 C112,28 106,33 106,40 C106,47 112,52 119,52 C124,52 128,50 130,46 L125,43 C124,45 122,47 119,47 C115,47 111,44 111,40 C111,36 115,33 119,33 C122,33 124,35 125,37 L130,34 Z" />
+
+    <!-- 'a' (Gold #FFC107) -->
+    <path
+        android:fillColor="#FFC107"
+        android:pathData="M140,50 C138,50 136,49 135,47 L135,50 L130,50 L130,35 L135,35 L135,38 C136,36 138,35 140,35 C145,35 148,39 148,42.5 C148,47 145,50 140,50 Z M139,39 C136.5,39 135,40.5 135,42.5 C135,44.5 136.5,46 139,46 C141.5,46 143,44.5 143,42.5 C143,40.5 141.5,39 139,39 Z" />
+
+    <!-- 's' (Gold #FFC107) -->
+    <path
+        android:fillColor="#FFC107"
+        android:pathData="M156,35 C160,35 163,37 163,40 C163,42 161,43.5 158,44.5 L155,45.5 C153.5,46 152.5,46.5 152.5,47.5 C152.5,48.5 153.5,49 155.5,49 C157.5,49 159.5,48 160.5,46.5 L163.5,49 C161.5,51 158.5,52 155.5,52 C151,52 147.5,50 147.5,47 C147.5,44 150.5,42.5 153.5,41.5 L156.5,40.5 C158,40 158.5,39.5 158.5,38.5 C158.5,37.5 157,37 155,37 C153,37 151.5,38 150.5,39 L147.5,36.5 C149.5,35 152.5,35 156,35 Z" />
+
+    <!-- 'h' (Gold #FFC107) -->
+    <path
+        android:fillColor="#FFC107"
+        android:pathData="M166,26 L171,26 L171,38 C172,36 174,35 177,35 C181.5,35 184,38 184,42.5 L184,50 L179,50 L179,43.5 C179,40.5 177.5,39.5 175.5,39.5 C173.5,39.5 171,41 171,43.5 L171,50 L166,50 L166,26 Z" />
+</vector>
