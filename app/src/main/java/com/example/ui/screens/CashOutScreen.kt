@@ -372,7 +372,7 @@ fun CashOutScreen(
                         singleLine = true
                     )
 
-                    val isOverLimit = (amountText.toDoubleOrNull() ?: 0.0) > 15000.0
+                    val isOverLimit = (amountText.toDoubleOrNull() ?: 0.0) > 10000.0
 
                     Column {
                         OutlinedTextField(
@@ -389,7 +389,7 @@ fun CashOutScreen(
                         if (isOverLimit) {
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Notice: The maximum withdrawal limit is PKR 15,000 per request.",
+                                text = "Notice: The maximum withdrawal limit is PKR 10,000 per request.",
                                 color = StopRed,
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold
@@ -397,7 +397,7 @@ fun CashOutScreen(
                         } else {
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Max limit: PKR 15,000 per request (Unlimited MB sales allowed)",
+                                text = "Max limit: PKR 10,000 per request (Unlimited MB sales allowed)",
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                                 fontSize = 11.sp
                             )
@@ -410,7 +410,7 @@ fun CashOutScreen(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        listOf(300, 500, 1000, 2000, 5000, 15000).forEach { preset ->
+                        listOf(200, 500, 1000, 2000, 5000, 10000).forEach { preset ->
                             Surface(
                                 shape = RoundedCornerShape(14.dp),
                                 color = if (amountText == preset.toString()) ActiveYellow else MaterialTheme.colorScheme.surfaceVariant,
@@ -429,12 +429,12 @@ fun CashOutScreen(
                             shape = RoundedCornerShape(14.dp),
                             color = MaterialTheme.colorScheme.surfaceVariant,
                             modifier = Modifier.clickable { 
-                                val maxBal = uiState.availableBalance.toInt().coerceAtMost(15000)
-                                amountText = if (maxBal > 0) maxBal.toString() else "300"
+                                val maxBal = uiState.availableBalance.toInt().coerceAtMost(10000)
+                                amountText = if (maxBal > 0) maxBal.toString() else "200"
                             }
                         ) {
                             Text(
-                                text = "Max (15k)",
+                                text = "Max (10k)",
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.ExtraBold,
                                 color = BentoEmerald,
@@ -532,7 +532,7 @@ fun CashOutScreen(
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "• Minimum Withdrawal: PKR 300\n• Maximum Daily Limit: PKR 15,000\n• Processing Time: 1 Hour (Direct to EasyPaisa / JazzCash / Bank)",
+                        text = "• Minimum Withdrawal: PKR 200\n• Maximum Daily Limit: PKR 10,000\n• Processing Time: 1 Hour (Direct to EasyPaisa / JazzCash / Bank)",
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         lineHeight = 18.sp

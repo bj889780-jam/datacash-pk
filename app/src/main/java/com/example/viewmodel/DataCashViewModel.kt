@@ -476,13 +476,13 @@ class DataCashViewModel : ViewModel() {
             return false
         }
 
-        if (amount < 300.0) {
-            _uiState.update { it.copy(userNoticeMessage = "Minimum withdrawal amount is PKR 300.") }
+        if (amount < 200.0) {
+            _uiState.update { it.copy(userNoticeMessage = "Minimum withdrawal amount is PKR 200.") }
             return false
         }
 
-        if (amount > 15000.0) {
-            _uiState.update { it.copy(userNoticeMessage = "Notice: The maximum withdrawal limit is PKR 15,000 per request. Please enter a valid amount.") }
+        if (amount > 10000.0) {
+            _uiState.update { it.copy(userNoticeMessage = "Notice: The maximum withdrawal limit is PKR 10,000 per request. Please enter a valid amount.") }
             return false
         }
 

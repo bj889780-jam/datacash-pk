@@ -95,33 +95,35 @@ fun HomeScreen(
     ) {
         item { Spacer(modifier = Modifier.height(6.dp)) }
 
-        // 1. Stats Bento Row (Main Balance + Mini Bento Cards)
+        // 1. Stats Bento Row (Today + Total Side-by-Side Cards)
         item {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // Main Balance Bento Card (Left)
+                val usdToday = uiState.todaysEarnings / 278.0
+                val usdTotal = uiState.totalEarnings / 278.0
+
+                // Today's Earnings Bento Card
                 Card(
                     modifier = Modifier
-                        .weight(1.1f)
-                        .height(130.dp)
+                        .weight(1f)
                         .border(
                             width = 1.dp,
-                            color = MaterialTheme.colorScheme.outline,
-                            shape = RoundedCornerShape(24.dp)
+                            color = BentoBlue.copy(alpha = 0.25f),
+                            shape = RoundedCornerShape(22.dp)
                         ),
-                    shape = RoundedCornerShape(24.dp),
+                    shape = RoundedCornerShape(22.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surface
+                        containerColor = BentoBlueLight.copy(alpha = 0.5f)
                     ),
                     elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
                 ) {
                     Column(
                         modifier = Modifier
-                            .fillMaxSize()
+                            .fillMaxWidth()
                             .padding(16.dp),
-                        verticalArrangement = Arrangement.SpaceBetween
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -129,120 +131,90 @@ fun HomeScreen(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
-                                text = "BALANCE",
+                                text = "TODAY",
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.ExtraBold,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
+                                color = BentoBlue,
                                 letterSpacing = 1.sp
                             )
-                            Surface(
-                                shape = RoundedCornerShape(10.dp),
-                                color = BentoBlueLight
-                            ) {
-                                Text(
-                                    text = "FREE PK",
-                                    fontSize = 9.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = BentoBlue,
-                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                                )
-                            }
+                            Icon(
+                                imageVector = Icons.Default.TrendingUp,
+                                contentDescription = null,
+                                tint = BentoBlue,
+                                modifier = Modifier.size(16.dp)
+                            )
                         }
 
                         Column {
                             Text(
-                                text = "PKR",
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = EmeraldGreen
-                            )
-                            Text(
-                                text = "%.2f".format(uiState.availableBalance),
-                                fontSize = 26.sp,
+                                text = "Rs %.2f".format(uiState.todaysEarnings),
+                                fontSize = 20.sp,
                                 fontWeight = FontWeight.Black,
                                 color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Text(
+                                text = "($%.2f USD)".format(usdToday),
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = BentoBlue
                             )
                         }
                     }
                 }
 
-                // Sub Stats Bento Cards Column (Right)
-                Column(
+                // Total Earnings Bento Card
+                Card(
                     modifier = Modifier
-                        .weight(0.9f)
-                        .height(130.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                        .weight(1f)
+                        .border(
+                            width = 1.dp,
+                            color = BentoEmerald.copy(alpha = 0.25f),
+                            shape = RoundedCornerShape(22.dp)
+                        ),
+                    shape = RoundedCornerShape(22.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = BentoEmeraldLight.copy(alpha = 0.5f)
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
                 ) {
-                    // Today Mini Bento Card
-                    Card(
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(1f)
-                            .border(
-                                width = 1.dp,
-                                color = BentoBlue.copy(alpha = 0.2f),
-                                shape = RoundedCornerShape(18.dp)
-                            ),
-                        shape = RoundedCornerShape(18.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = BentoBlueLight.copy(alpha = 0.6f)
-                        )
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(horizontal = 12.dp, vertical = 8.dp),
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "TODAY",
-                                fontSize = 9.sp,
-                                fontWeight = FontWeight.ExtraBold,
-                                color = BentoBlue,
-                                letterSpacing = 0.8.sp
-                            )
-                            Text(
-                                text = "Rs %.2f".format(uiState.todaysEarnings),
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                    }
-
-                    // Total Mini Bento Card
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                            .border(
-                                width = 1.dp,
-                                color = BentoEmerald.copy(alpha = 0.2f),
-                                shape = RoundedCornerShape(18.dp)
-                            ),
-                        shape = RoundedCornerShape(18.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = BentoEmeraldLight.copy(alpha = 0.6f)
-                        )
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(horizontal = 12.dp, vertical = 8.dp),
-                            verticalArrangement = Arrangement.Center
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
                                 text = "TOTAL",
-                                fontSize = 9.sp,
+                                fontSize = 11.sp,
                                 fontWeight = FontWeight.ExtraBold,
                                 color = BentoEmerald,
-                                letterSpacing = 0.8.sp
+                                letterSpacing = 1.sp
                             )
+                            Icon(
+                                imageVector = Icons.Default.AttachMoney,
+                                contentDescription = null,
+                                tint = BentoEmerald,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
+
+                        Column {
                             Text(
                                 text = "Rs %.2f".format(uiState.totalEarnings),
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.Bold,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Black,
                                 color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Text(
+                                text = "($%.2f USD)".format(usdTotal),
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = BentoEmerald
                             )
                         }
                     }
