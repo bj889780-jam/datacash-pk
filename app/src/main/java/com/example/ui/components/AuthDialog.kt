@@ -395,7 +395,7 @@ fun AuthDialog(
                     modifier = Modifier.testTag("auth_cancel_btn")
                 ) {
                     Text(
-                        text = "Cancel / Continue as Guest",
+                        text = "Cancel",
                         fontSize = 13.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

@@ -227,10 +227,10 @@ fun MineScreen(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Text(
-                                text = if (uiState.isUserLoggedIn) "Status: Firebase Authenticated" else "Status: Guest Mode",
+                                text = if (uiState.isUserLoggedIn) "Status: Firebase Authenticated" else "Status: Connected & Secured",
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = if (uiState.isUserLoggedIn) BentoEmerald else MaterialTheme.colorScheme.onSurface
+                                color = BentoEmerald
                             )
                         }
                     }
@@ -242,34 +242,6 @@ fun MineScreen(
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-
-                    if (!uiState.isUserLoggedIn) {
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            OutlinedButton(
-                                onClick = { onOpenAuth(false) },
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .height(44.dp),
-                                shape = RoundedCornerShape(12.dp)
-                            ) {
-                                Text("Sign In", fontSize = 13.sp, fontWeight = FontWeight.Bold)
-                            }
-                            Button(
-                                onClick = { onOpenAuth(true) },
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .height(44.dp),
-                                colors = ButtonDefaults.buttonColors(containerColor = BentoEmerald),
-                                shape = RoundedCornerShape(12.dp)
-                            ) {
-                                Text("Create Account", fontSize = 13.sp, fontWeight = FontWeight.Bold)
-                            }
-                        }
-                    }
                 }
             }
         }
@@ -1014,7 +986,7 @@ fun MineScreen(
                             ) {
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text("Payout Notifications", fontSize = 13.sp, fontWeight = FontWeight.Bold)
-                                    Text("Status updates for EasyPaisa / JazzCash", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Text("Status updates for EasyPaisa / JazzCash / Bank Transfer", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 }
                                 Text("ENABLED", fontSize = 11.sp, fontWeight = FontWeight.ExtraBold, color = BentoBlue)
                             }

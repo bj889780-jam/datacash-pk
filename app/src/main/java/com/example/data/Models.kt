@@ -5,13 +5,14 @@ import java.util.Date
 import java.util.Locale
 
 data class UserProfile(
-    val name: String = "Bilal Iqbal Jamali",
-    val email: String = "support@datacash.pk",
+    val name: String = "DataCash User",
+    val email: String = "user@datacash.pk",
+    val photoUrl: String? = null,
     val ownerTag: String = "Owner: Bilal Iqbal Jamali",
     val isVerified: Boolean = true
 ) {
     val avatarInitial: String
-        get() = name.trim().firstOrNull()?.uppercase() ?: "B"
+        get() = name.trim().firstOrNull()?.uppercase() ?: "D"
 }
 
 enum class NavigationTab(val title: String, val route: String) {

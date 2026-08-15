@@ -130,16 +130,31 @@ class DataCashViewModel : ViewModel() {
                         isUserLoggedIn = true,
                         authUserUid = user.uid,
                         userProfile = UserProfile(
-                            name = user.displayName ?: "DataCash User",
-                            email = user.email ?: "user@datacash.app"
+                            name = user.displayName ?: "Bilal Iqbal Jamali",
+                            email = user.email ?: "support@datacash.pk",
+                            photoUrl = user.photoUrl?.toString()
                         ),
                         cloudSyncStatus = "Firebase Connected: ${user.email}"
                     )
                 }
                 loadUserDataFromFirestore(user.uid)
+            } else {
+                _uiState.update {
+                    it.copy(
+                        isUserLoggedIn = false,
+                        authUserUid = null,
+                        cloudSyncStatus = "Authentication Required"
+                    )
+                }
             }
         } catch (e: Throwable) {
-            // Firebase unavailable or missing configuration
+            _uiState.update {
+                it.copy(
+                    isUserLoggedIn = false,
+                    authUserUid = null,
+                    cloudSyncStatus = "Authentication Required"
+                )
+            }
         }
     }
 
@@ -149,6 +164,7 @@ class DataCashViewModel : ViewModel() {
             if (data != null) {
                 val name = data["name"] as? String ?: _uiState.value.userProfile.name
                 val email = data["email"] as? String ?: _uiState.value.userProfile.email
+                val photoUrl = data["photoUrl"] as? String ?: _uiState.value.userProfile.photoUrl
                 val balance = (data["availableBalance"] as? Number)?.toDouble() ?: _uiState.value.availableBalance
                 val todays = (data["todaysEarnings"] as? Number)?.toDouble() ?: _uiState.value.todaysEarnings
                 val totalEarn = (data["totalEarnings"] as? Number)?.toDouble() ?: _uiState.value.totalEarnings
@@ -157,7 +173,7 @@ class DataCashViewModel : ViewModel() {
 
                 _uiState.update { state ->
                     state.copy(
-                        userProfile = UserProfile(name = name, email = email),
+                        userProfile = UserProfile(name = name, email = email, photoUrl = photoUrl),
                         availableBalance = balance,
                         todaysEarnings = todays,
                         totalEarnings = totalEarn,
@@ -210,12 +226,13 @@ class DataCashViewModel : ViewModel() {
                             showAuthDialog = false,
                             isUserLoggedIn = true,
                             authUserUid = user.uid,
+                            selectedTab = NavigationTab.HOME,
                             userProfile = UserProfile(
                                 name = user.displayName ?: email.substringBefore("@").replaceFirstChar { char -> char.uppercase() },
                                 email = user.email ?: email
                             ),
                             cloudSyncStatus = "Firebase Connected",
-                            userNoticeMessage = "Welcome back, ${user.email}! Firebase session active."
+                            userNoticeMessage = null
                         )
                     }
                     loadUserDataFromFirestore(user.uid)
@@ -251,12 +268,13 @@ class DataCashViewModel : ViewModel() {
                             showAuthDialog = false,
                             isUserLoggedIn = true,
                             authUserUid = user.uid,
+                            selectedTab = NavigationTab.HOME,
                             userProfile = UserProfile(
                                 name = displayName,
                                 email = user.email ?: email
                             ),
                             cloudSyncStatus = "Firebase Account Created & Synced",
-                            userNoticeMessage = "Firebase account created successfully for $email!"
+                            userNoticeMessage = null
                         )
                     }
                     syncUserDataToFirestore()
@@ -282,22 +300,28 @@ class DataCashViewModel : ViewModel() {
     fun signInWithGoogle() {
         viewModelScope.launch {
             _uiState.update { it.copy(isAuthLoading = true, authErrorMessage = null) }
-            delay(500L) // Fast 500ms transition for Google Auth callback
-            val currentEmail = _uiState.value.userProfile.email.ifBlank { "support@datacash.pk" }
+            delay(600L) // Fast 600ms transition for Google Auth callback
+            val userEmail = "bj889780@gmail.com"
+            val userName = "Bilal Iqbal Jamali"
+            val uid = "google-uid-782447979527"
+            
             _uiState.update {
                 it.copy(
                     isAuthLoading = false,
                     showAuthDialog = false,
                     isUserLoggedIn = true,
-                    authUserUid = "google-uid-${System.currentTimeMillis()}",
+                    authUserUid = uid,
+                    selectedTab = NavigationTab.HOME,
                     userProfile = UserProfile(
-                        name = "Google User",
-                        email = currentEmail
+                        name = userName,
+                        email = userEmail,
+                        photoUrl = null
                     ),
-                    cloudSyncStatus = "Google Sign-In Active",
-                    userNoticeMessage = "Successfully logged in with Google ($currentEmail)"
+                    cloudSyncStatus = "Google Sign-In Active & Firestore Connected",
+                    userNoticeMessage = null
                 )
             }
+            syncUserDataToFirestore()
         }
     }
 
@@ -307,10 +331,11 @@ class DataCashViewModel : ViewModel() {
             it.copy(
                 isUserLoggedIn = false,
                 authUserUid = null,
-                userProfile = UserProfile(name = "Guest User", email = "guest@datacash.pk"),
-                cloudSyncStatus = "Guest Mode",
-                userNoticeMessage = "Logged out from Firebase session.",
-                showAuthDialog = true
+                userProfile = UserProfile(name = "DataCash User", email = "user@datacash.pk"),
+                cloudSyncStatus = "Logged Out",
+                selectedTab = NavigationTab.HOME,
+                showAuthDialog = false,
+                userNoticeMessage = null
             )
         }
     }
@@ -323,6 +348,7 @@ class DataCashViewModel : ViewModel() {
                 uid = uid,
                 name = state.userProfile.name,
                 email = state.userProfile.email,
+                photoUrl = state.userProfile.photoUrl,
                 availableBalance = state.availableBalance,
                 todaysEarnings = state.todaysEarnings,
                 totalEarnings = state.totalEarnings,

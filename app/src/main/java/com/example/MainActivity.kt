@@ -58,6 +58,7 @@ import com.example.ui.components.HeaderBar
 import com.example.ui.components.SplashScreen
 import com.example.ui.screens.CashOutScreen
 import com.example.ui.screens.HomeScreen
+import com.example.ui.screens.LoginScreen
 import com.example.ui.screens.MineScreen
 import com.example.ui.theme.BentoEmerald
 import com.example.ui.theme.DataCashTheme
@@ -99,36 +100,55 @@ class MainActivity : ComponentActivity() {
 
                 DataCashTheme(darkTheme = uiState.isDarkTheme) {
                     Box(modifier = Modifier.fillMaxSize()) {
-                        DataCashMainApp(
-                            uiState = uiState,
-                            onToggleTheme = { viewModel.toggleTheme() },
-                            onTabSelected = { viewModel.selectTab(it) },
-                            onStartSelling = {
-                                val isOnline = NetworkUtils.isNetworkAvailable(context)
-                                viewModel.startSelling(isOnline)
-                            },
-                            onStopSelling = { viewModel.stopSelling() },
-                            onCashOutCurrent = { viewModel.triggerCashOutCelebration() },
-                            onResetSelling = { viewModel.resetSelling() },
-                            onWithdrawSubmit = { method, holder, number, amount ->
-                                viewModel.submitWithdrawal(method, holder, number, amount)
-                            },
-                            onConfirmWithdrawal = { viewModel.confirmPendingWithdrawal() },
-                            onClearNotice = { viewModel.clearUserNotice() },
-                            onOpenAuth = { isSignUp -> viewModel.openAuthDialog(isSignUp) },
-                            onCloseAuth = { viewModel.closeAuthDialog() },
-                            onAuthTabSwitch = { isSignUp -> viewModel.setAuthSignUpMode(isSignUp) },
-                            onSignIn = { email, pass -> viewModel.signInWithFirebase(email, pass, context) },
-                            onSignUp = { email, pass, name -> viewModel.signUpWithFirebase(email, pass, name, context) },
-                            onGoogleSignIn = { viewModel.signInWithGoogle() },
-                            onNetworkConnectionLost = { viewModel.onNetworkConnectionLost() },
-                            onLogout = { viewModel.signOutFirebase() },
-                            onOpenAdminPin = { viewModel.openAdminPinDialog() },
-                            onCloseAdminPin = { viewModel.closeAdminPinDialog() },
-                            onVerifyAdminPin = { pin -> viewModel.verifyAdminPin(pin) },
-                            onCloseAdminDashboard = { viewModel.closeAdminDashboard() },
-                            onApproveWithdrawal = { id -> viewModel.approveWithdrawalRequest(id) },
-                            onRejectWithdrawal = { id -> viewModel.rejectWithdrawalRequest(id) }
+                        if (uiState.isUserLoggedIn) {
+                            DataCashMainApp(
+                                uiState = uiState,
+                                onToggleTheme = { viewModel.toggleTheme() },
+                                onTabSelected = { viewModel.selectTab(it) },
+                                onStartSelling = {
+                                    val isOnline = NetworkUtils.isNetworkAvailable(context)
+                                    viewModel.startSelling(isOnline)
+                                },
+                                onStopSelling = { viewModel.stopSelling() },
+                                onCashOutCurrent = { viewModel.triggerCashOutCelebration() },
+                                onResetSelling = { viewModel.resetSelling() },
+                                onWithdrawSubmit = { method, holder, number, amount ->
+                                    viewModel.submitWithdrawal(method, holder, number, amount)
+                                },
+                                onConfirmWithdrawal = { viewModel.confirmPendingWithdrawal() },
+                                onClearNotice = { viewModel.clearUserNotice() },
+                                onOpenAuth = { isSignUp -> viewModel.openAuthDialog(isSignUp) },
+                                onCloseAuth = { viewModel.closeAuthDialog() },
+                                onAuthTabSwitch = { isSignUp -> viewModel.setAuthSignUpMode(isSignUp) },
+                                onSignIn = { email, pass -> viewModel.signInWithFirebase(email, pass, context) },
+                                onSignUp = { email, pass, name -> viewModel.signUpWithFirebase(email, pass, name, context) },
+                                onGoogleSignIn = { viewModel.signInWithGoogle() },
+                                onNetworkConnectionLost = { viewModel.onNetworkConnectionLost() },
+                                onLogout = { viewModel.signOutFirebase() },
+                                onOpenAdminPin = { viewModel.openAdminPinDialog() },
+                                onCloseAdminPin = { viewModel.closeAdminPinDialog() },
+                                onVerifyAdminPin = { pin -> viewModel.verifyAdminPin(pin) },
+                                onCloseAdminDashboard = { viewModel.closeAdminDashboard() },
+                                onApproveWithdrawal = { id -> viewModel.approveWithdrawalRequest(id) },
+                                onRejectWithdrawal = { id -> viewModel.rejectWithdrawalRequest(id) }
+                            )
+                        } else {
+                            LoginScreen(
+                                isLoading = uiState.isAuthLoading,
+                                errorMessage = uiState.authErrorMessage,
+                                onGoogleSignIn = { viewModel.signInWithGoogle() },
+                                onEmailSignIn = { email, pass -> viewModel.signInWithFirebase(email, pass, context) },
+                                onEmailSignUp = { email, pass, name -> viewModel.signUpWithFirebase(email, pass, name, context) },
+                                isDarkTheme = uiState.isDarkTheme,
+                                onToggleTheme = { viewModel.toggleTheme() }
+                            )
+                        }
+
+                        // Fullscreen Loading Overlay during Firebase authentication transition
+                        ConnectingOverlay(
+                            isVisible = uiState.isAuthLoading,
+                            title = "Connecting to device...",
+                            subtitle = "Authenticating session & syncing user profile..."
                         )
 
                         // Specification 4: Seamless fade out after 5 seconds to reveal main dashboard
@@ -328,13 +348,6 @@ fun DataCashMainApp(
                 onGoogleSignIn = onGoogleSignIn
             )
         }
-
-        // Fullscreen Loading Overlay during Firebase authentication transition
-        ConnectingOverlay(
-            isVisible = uiState.isAuthLoading,
-            title = "Connecting to device...",
-            subtitle = "Authenticating session & syncing initial user state..."
-        )
 
         // Fullscreen Confetti Balloons Overlay when Cashing out (3 SECONDS)
         if (uiState.isCelebrationActive) {

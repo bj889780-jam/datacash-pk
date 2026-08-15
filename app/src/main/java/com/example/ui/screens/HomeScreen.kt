@@ -54,6 +54,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.style.TextOverflow
 import com.example.ui.components.WaveRouteAnimation
 import com.example.viewmodel.DataCashUiState
 import com.example.ui.theme.AccentGold
@@ -110,21 +111,22 @@ fun HomeScreen(
                         .weight(1f)
                         .border(
                             width = 1.dp,
-                            color = BentoBlue.copy(alpha = 0.25f),
-                            shape = RoundedCornerShape(22.dp)
+                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                            shape = RoundedCornerShape(20.dp)
                         ),
-                    shape = RoundedCornerShape(22.dp),
+                    shape = RoundedCornerShape(20.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = BentoBlueLight.copy(alpha = 0.5f)
+                        containerColor = MaterialTheme.colorScheme.surface
                     ),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
+                        // Header Label & Icon
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween,
@@ -132,31 +134,47 @@ fun HomeScreen(
                         ) {
                             Text(
                                 text = "TODAY",
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.ExtraBold,
-                                color = BentoBlue,
-                                letterSpacing = 1.sp
-                            )
-                            Icon(
-                                imageVector = Icons.Default.TrendingUp,
-                                contentDescription = null,
-                                tint = BentoBlue,
-                                modifier = Modifier.size(16.dp)
-                            )
-                        }
-
-                        Column {
-                            Text(
-                                text = "Rs %.2f".format(uiState.todaysEarnings),
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Black,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                            Text(
-                                text = "($%.2f USD)".format(usdToday),
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = BentoBlue
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                letterSpacing = 0.8.sp
+                            )
+                            Surface(
+                                shape = CircleShape,
+                                color = BentoBlueLight,
+                                modifier = Modifier.size(26.dp)
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        imageVector = Icons.Default.TrendingUp,
+                                        contentDescription = null,
+                                        tint = BentoBlue,
+                                        modifier = Modifier.size(15.dp)
+                                    )
+                                }
+                            }
+                        }
+
+                        // Amount Content with Overflow Protection
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(2.dp)
+                        ) {
+                            Text(
+                                text = "Rs %.2f".format(uiState.todaysEarnings),
+                                fontSize = 21.sp,
+                                fontWeight = FontWeight.Black,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Text(
+                                text = "$%.2f USD".format(usdToday),
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
                     }
@@ -168,21 +186,22 @@ fun HomeScreen(
                         .weight(1f)
                         .border(
                             width = 1.dp,
-                            color = BentoEmerald.copy(alpha = 0.25f),
-                            shape = RoundedCornerShape(22.dp)
+                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                            shape = RoundedCornerShape(20.dp)
                         ),
-                    shape = RoundedCornerShape(22.dp),
+                    shape = RoundedCornerShape(20.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = BentoEmeraldLight.copy(alpha = 0.5f)
+                        containerColor = MaterialTheme.colorScheme.surface
                     ),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
+                        // Header Label & Icon
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween,
@@ -190,31 +209,47 @@ fun HomeScreen(
                         ) {
                             Text(
                                 text = "TOTAL",
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.ExtraBold,
-                                color = BentoEmerald,
-                                letterSpacing = 1.sp
-                            )
-                            Icon(
-                                imageVector = Icons.Default.AttachMoney,
-                                contentDescription = null,
-                                tint = BentoEmerald,
-                                modifier = Modifier.size(16.dp)
-                            )
-                        }
-
-                        Column {
-                            Text(
-                                text = "Rs %.2f".format(uiState.totalEarnings),
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Black,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                            Text(
-                                text = "($%.2f USD)".format(usdTotal),
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = BentoEmerald
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                letterSpacing = 0.8.sp
+                            )
+                            Surface(
+                                shape = CircleShape,
+                                color = BentoEmeraldLight,
+                                modifier = Modifier.size(26.dp)
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        imageVector = Icons.Default.AttachMoney,
+                                        contentDescription = null,
+                                        tint = BentoEmerald,
+                                        modifier = Modifier.size(15.dp)
+                                    )
+                                }
+                            }
+                        }
+
+                        // Amount Content with Overflow Protection
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(2.dp)
+                        ) {
+                            Text(
+                                text = "Rs %.2f".format(uiState.totalEarnings),
+                                fontSize = 21.sp,
+                                fontWeight = FontWeight.Black,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Text(
+                                text = "$%.2f USD".format(usdTotal),
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
                     }
