@@ -569,7 +569,7 @@ fun MineScreen(
                     .fillMaxWidth()
                     .border(
                         width = 1.dp,
-                        color = Color(0xFF0F172A).copy(alpha = 0.3f),
+                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
                         shape = RoundedCornerShape(22.dp)
                     )
                     .testTag("admin_dashboard_card"),
@@ -598,7 +598,7 @@ fun MineScreen(
                     Button(
                         onClick = onOpenAdminPin,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF0F172A),
+                            containerColor = BentoBlue,
                             contentColor = Color.White
                         ),
                         shape = RoundedCornerShape(16.dp),

@@ -59,7 +59,10 @@ fun safeAssetPainterResource(
     val assetPainter = remember(cleanPath, context) {
         try {
             val bytes = context.assets.open(cleanPath).use { it.readBytes() }
-            val bitmap = android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+            val options = android.graphics.BitmapFactory.Options().apply {
+                inPreferredConfig = android.graphics.Bitmap.Config.ARGB_8888
+            }
+            val bitmap = android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.size, options)
             if (bitmap != null) {
                 BitmapPainter(bitmap.asImageBitmap())
             } else null

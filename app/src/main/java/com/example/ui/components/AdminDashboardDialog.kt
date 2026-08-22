@@ -97,7 +97,7 @@ fun AdminDashboardDialog(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFF0F172A))
+                .background(MaterialTheme.colorScheme.background)
         ) {
             Surface(
                 modifier = Modifier
@@ -108,7 +108,7 @@ fun AdminDashboardDialog(
                     .clip(RoundedCornerShape(24.dp))
                     .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(24.dp))
                     .testTag("admin_dashboard_screen"),
-                color = Color(0xFF0F172A)
+                color = MaterialTheme.colorScheme.background
             ) {
             Column(
                 modifier = Modifier
@@ -124,14 +124,14 @@ fun AdminDashboardDialog(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Surface(
                             shape = CircleShape,
-                            color = Color(0xFF0F172A),
+                            color = MaterialTheme.colorScheme.surfaceVariant,
                             modifier = Modifier.size(42.dp)
                         ) {
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
                                     imageVector = Icons.Default.AdminPanelSettings,
                                     contentDescription = null,
-                                    tint = Color.White,
+                                    tint = BentoEmerald,
                                     modifier = Modifier.size(24.dp)
                                 )
                             }
@@ -243,7 +243,7 @@ fun AdminDashboardDialog(
                                 )
                             },
                             colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = Color(0xFF0F172A),
+                                selectedContainerColor = BentoEmerald,
                                 selectedLabelColor = Color.White
                             ),
                             shape = RoundedCornerShape(12.dp)
@@ -351,26 +351,42 @@ fun AdminWithdrawalCard(
                         ) {
                             when (txn.paymentMethod) {
                                 PaymentMethod.EASYPAISA -> {
-                                    androidx.compose.foundation.Image(
-                                        painter = safePainterResource(
-                                            id = R.drawable.ic_easypaisa_vector
-                                        ),
-                                        contentDescription = "EasyPaisa Logo",
-                                        modifier = Modifier.size(16.dp),
-                                        contentScale = androidx.compose.ui.layout.ContentScale.Fit
-                                    )
-                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Surface(
+                                        shape = RoundedCornerShape(6.dp),
+                                        color = Color.White,
+                                        modifier = Modifier.size(22.dp)
+                                    ) {
+                                        androidx.compose.foundation.Image(
+                                            painter = safePainterResource(
+                                                id = R.drawable.easypaisa
+                                            ),
+                                            contentDescription = "EasyPaisa Real Logo",
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .padding(2.dp),
+                                            contentScale = androidx.compose.ui.layout.ContentScale.Fit
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.width(6.dp))
                                 }
                                 PaymentMethod.JAZZCASH -> {
-                                    androidx.compose.foundation.Image(
-                                        painter = safePainterResource(
-                                            id = R.drawable.ic_jazzcash_vector
-                                        ),
-                                        contentDescription = "JazzCash Logo",
-                                        modifier = Modifier.size(16.dp),
-                                        contentScale = androidx.compose.ui.layout.ContentScale.Fit
-                                    )
-                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Surface(
+                                        shape = RoundedCornerShape(6.dp),
+                                        color = Color.White,
+                                        modifier = Modifier.size(22.dp)
+                                    ) {
+                                        androidx.compose.foundation.Image(
+                                            painter = safePainterResource(
+                                                id = R.drawable.jazzcash
+                                            ),
+                                            contentDescription = "JazzCash Real Logo",
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .padding(2.dp),
+                                            contentScale = androidx.compose.ui.layout.ContentScale.Fit
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.width(6.dp))
                                 }
                                 else -> {}
                             }

@@ -5,6 +5,7 @@ import android.util.Log
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeoutOrNull
@@ -77,6 +78,16 @@ class FirebaseRepository(private val context: Context? = null) {
             auth?.currentUser
         } catch (e: Throwable) {
             null
+        }
+    }
+
+    fun addAuthStateListener(listener: (FirebaseUser?) -> Unit) {
+        try {
+            auth?.addAuthStateListener { firebaseAuth ->
+                listener(firebaseAuth.currentUser)
+            }
+        } catch (e: Throwable) {
+            Log.w("FirebaseRepository", "addAuthStateListener failed: ${e.message}")
         }
     }
 
@@ -162,6 +173,29 @@ class FirebaseRepository(private val context: Context? = null) {
                 else -> msg.ifBlank { "Sign in failed. Please try again." }
             }
             Result.failure(Exception(friendlyMsg))
+        }
+    }
+
+    suspend fun signInWithGoogleCredential(idToken: String, ctx: Context? = null): Result<FirebaseUser> {
+        ensureFirebaseInitialized(ctx)
+        val authInstance = auth
+        if (authInstance == null) {
+            return Result.failure(Exception("Authentication service unavailable. Please check connection."))
+        }
+        return try {
+            val credential = GoogleAuthProvider.getCredential(idToken, null)
+            val authResult = withTimeoutOrNull(10000L) {
+                authInstance.signInWithCredential(credential).await()
+            }
+            val user = authResult?.user ?: authInstance.currentUser
+            if (user != null) {
+                Result.success(user)
+            } else {
+                Result.failure(Exception("Google Sign-In failed to return user profile."))
+            }
+        } catch (e: Exception) {
+            Log.e("FirebaseRepository", "Google signInWithCredential error", e)
+            Result.failure(e)
         }
     }
 
@@ -278,6 +312,53 @@ class FirebaseRepository(private val context: Context? = null) {
         } catch (e: Exception) {
             Log.e("FirebaseRepository", "UpdateWithdrawalStatus error", e)
             false
+        }
+    }
+
+    suspend fun getMbSoldLast24Hours(userId: String): Double {
+        val dbInstance = db ?: return 0.0
+        return try {
+            val cutoff = System.currentTimeMillis() - 24 * 60 * 60 * 1000L
+            val snapshot = dbInstance.collection("users")
+                .document(userId)
+                .collection("earnings")
+                .whereGreaterThanOrEqualTo("createdMs", cutoff)
+                .get()
+                .await()
+            var total = 0.0
+            for (doc in snapshot.documents) {
+                val mb = doc.getDouble("mbSold") ?: 0.0
+                total += mb
+            }
+            total
+        } catch (e: Exception) {
+            Log.e("FirebaseRepository", "getMbSoldLast24Hours error", e)
+            0.0
+        }
+    }
+
+    suspend fun getWithdrawalsLast24Hours(userId: String): Double {
+        val dbInstance = db ?: return 0.0
+        return try {
+            val cutoff = System.currentTimeMillis() - 24 * 60 * 60 * 1000L
+            val snapshot = dbInstance.collection("users")
+                .document(userId)
+                .collection("withdrawals")
+                .whereGreaterThanOrEqualTo("createdMs", cutoff)
+                .get()
+                .await()
+            var total = 0.0
+            for (doc in snapshot.documents) {
+                val statusStr = doc.getString("status") ?: ""
+                if (statusStr != WithdrawalStatus.REJECTED.name) {
+                    val amount = doc.getDouble("requestedAmount") ?: 0.0
+                    total += amount
+                }
+            }
+            total
+        } catch (e: Exception) {
+            Log.e("FirebaseRepository", "getWithdrawalsLast24Hours error", e)
+            0.0
         }
     }
 }

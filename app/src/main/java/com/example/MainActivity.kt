@@ -1,6 +1,8 @@
 package com.example
 
 import android.app.Activity
+import android.content.res.Configuration
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
@@ -72,6 +74,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         try {
+            // Eliminate initial white screen flash on cold start by matching system dark/light background
+            val isDark = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+            val nativeBgColor = if (isDark) 0xFF121212.toInt() else 0xFFF8F9FA.toInt()
+            window.decorView.setBackgroundColor(nativeBgColor)
+            window.setBackgroundDrawable(ColorDrawable(nativeBgColor))
+
             try {
                 if (FirebaseApp.getApps(applicationContext).isEmpty()) {
                     try {
@@ -98,12 +106,11 @@ class MainActivity : ComponentActivity() {
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
                 val context = LocalContext.current
 
-                DataCashTheme(darkTheme = uiState.isDarkTheme) {
+                DataCashTheme {
                     Box(modifier = Modifier.fillMaxSize()) {
                         if (uiState.isUserLoggedIn) {
                             DataCashMainApp(
                                 uiState = uiState,
-                                onToggleTheme = { viewModel.toggleTheme() },
                                 onTabSelected = { viewModel.selectTab(it) },
                                 onStartSelling = {
                                     val isOnline = NetworkUtils.isNetworkAvailable(context)
@@ -122,7 +129,7 @@ class MainActivity : ComponentActivity() {
                                 onAuthTabSwitch = { isSignUp -> viewModel.setAuthSignUpMode(isSignUp) },
                                 onSignIn = { email, pass -> viewModel.signInWithFirebase(email, pass, context) },
                                 onSignUp = { email, pass, name -> viewModel.signUpWithFirebase(email, pass, name, context) },
-                                onGoogleSignIn = { viewModel.signInWithGoogle() },
+                                onGoogleSignIn = { viewModel.signInWithGoogle(context) },
                                 onNetworkConnectionLost = { viewModel.onNetworkConnectionLost() },
                                 onLogout = { viewModel.signOutFirebase() },
                                 onOpenAdminPin = { viewModel.openAdminPinDialog() },
@@ -130,17 +137,16 @@ class MainActivity : ComponentActivity() {
                                 onVerifyAdminPin = { pin -> viewModel.verifyAdminPin(pin) },
                                 onCloseAdminDashboard = { viewModel.closeAdminDashboard() },
                                 onApproveWithdrawal = { id -> viewModel.approveWithdrawalRequest(id) },
-                                onRejectWithdrawal = { id -> viewModel.rejectWithdrawalRequest(id) }
+                                onRejectWithdrawal = { id -> viewModel.rejectWithdrawalRequest(id) },
+                                onDismissCelebration = { viewModel.dismissCelebration() }
                             )
                         } else {
                             LoginScreen(
                                 isLoading = uiState.isAuthLoading,
                                 errorMessage = uiState.authErrorMessage,
-                                onGoogleSignIn = { viewModel.signInWithGoogle() },
+                                onGoogleSignIn = { viewModel.signInWithGoogle(context) },
                                 onEmailSignIn = { email, pass -> viewModel.signInWithFirebase(email, pass, context) },
-                                onEmailSignUp = { email, pass, name -> viewModel.signUpWithFirebase(email, pass, name, context) },
-                                isDarkTheme = uiState.isDarkTheme,
-                                onToggleTheme = { viewModel.toggleTheme() }
+                                onEmailSignUp = { email, pass, name -> viewModel.signUpWithFirebase(email, pass, name, context) }
                             )
                         }
 
@@ -174,7 +180,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun DataCashMainApp(
     uiState: com.example.viewmodel.DataCashUiState,
-    onToggleTheme: () -> Unit,
     onTabSelected: (NavigationTab) -> Unit,
     onStartSelling: () -> Unit,
     onStopSelling: () -> Unit,
@@ -196,7 +201,8 @@ fun DataCashMainApp(
     onVerifyAdminPin: (String) -> Unit,
     onCloseAdminDashboard: () -> Unit,
     onApproveWithdrawal: (String) -> Unit,
-    onRejectWithdrawal: (String) -> Unit
+    onRejectWithdrawal: (String) -> Unit,
+    onDismissCelebration: () -> Unit = {}
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -234,8 +240,6 @@ fun DataCashMainApp(
             topBar = {
                 HeaderBar(
                     userProfile = uiState.userProfile,
-                    isDarkTheme = uiState.isDarkTheme,
-                    onToggleTheme = onToggleTheme,
                     onAvatarClick = { onTabSelected(NavigationTab.MINE) }
                 )
             },
@@ -352,7 +356,8 @@ fun DataCashMainApp(
         // Fullscreen Confetti Balloons Overlay when Cashing out (3 SECONDS)
         if (uiState.isCelebrationActive) {
             ConfettiBalloonsOverlay(
-                message = uiState.celebrationMessage
+                message = uiState.celebrationMessage,
+                onDismiss = onDismissCelebration
             )
         }
 

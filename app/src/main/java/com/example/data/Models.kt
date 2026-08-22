@@ -22,7 +22,7 @@ enum class NavigationTab(val title: String, val route: String) {
 }
 
 enum class PaymentMethod(val id: String, val title: String, val brandColorHex: Long, val badgeText: String) {
-    EASYPAISA("easypaisa", "EasyPaisa", 0xFF00A651, "Instant 24/7"),
+    EASYPAISA("easypaisa", "Easypaisa", 0xFF00A651, "Instant 24/7"),
     JAZZCASH("jazzcash", "JazzCash", 0xFFD32F2F, "Fast Transfer"),
     BANK_TRANSFER("bank_transfer", "Bank Transfer", 0xFF1976D2, "All PK Banks")
 }
@@ -31,7 +31,8 @@ data class EarningRecord(
     val id: String = System.currentTimeMillis().toString(),
     val mbSold: Double,
     val pkrEarned: Double,
-    val timestamp: String = SimpleDateFormat("dd MMM, hh:mm a", Locale.getDefault()).format(Date())
+    val timestamp: String = SimpleDateFormat("dd MMM, hh:mm a", Locale.getDefault()).format(Date()),
+    val createdMs: Long = System.currentTimeMillis()
 )
 
 enum class WithdrawalStatus {
@@ -52,7 +53,8 @@ data class WithdrawalRecord(
     val status: WithdrawalStatus = WithdrawalStatus.PENDING_1_HR,
     val timestamp: String = SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.getDefault()).format(Date()),
     val userName: String = accountHolder,
-    val bankName: String? = null
+    val bankName: String? = null,
+    val createdMs: Long = System.currentTimeMillis()
 ) {
     val displayBankName: String?
         get() {

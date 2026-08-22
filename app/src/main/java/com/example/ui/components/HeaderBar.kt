@@ -1,7 +1,6 @@
 package com.example.ui.components
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,12 +14,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.LightMode
-import androidx.compose.material.icons.filled.WifiCalling3
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -31,20 +24,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.R
 import com.example.data.UserProfile
 import com.example.ui.theme.AccentGold
-import com.example.ui.theme.BentoBlue
 
 @Composable
 fun HeaderBar(
     userProfile: UserProfile,
-    isDarkTheme: Boolean,
-    onToggleTheme: () -> Unit,
     onAvatarClick: () -> Unit
 ) {
     Surface(
@@ -85,23 +74,6 @@ fun HeaderBar(
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }
-
-            // Bento Style Pill Theme Toggle Button
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .clickable { onToggleTheme() },
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = if (isDarkTheme) "🌙" else "☀️",
-                    fontSize = 18.sp
-                )
-            }
-
-            Spacer(modifier = Modifier.width(10.dp))
 
             // Bento Dynamic User Avatar
             Surface(

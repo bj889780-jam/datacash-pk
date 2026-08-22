@@ -85,14 +85,14 @@ fun AdminPinDialog(
                 // Header Icon & Title
                 Surface(
                     shape = CircleShape,
-                    color = Color(0xFF0F172A),
+                    color = MaterialTheme.colorScheme.surfaceVariant,
                     modifier = Modifier.size(54.dp)
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Icon(
                             imageVector = Icons.Default.AdminPanelSettings,
                             contentDescription = "Admin Security",
-                            tint = Color.White,
+                            tint = BentoEmerald,
                             modifier = Modifier.size(30.dp)
                         )
                     }
@@ -191,7 +191,7 @@ fun AdminPinDialog(
                         .height(48.dp)
                         .testTag("admin_pin_submit_btn"),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF0F172A),
+                        containerColor = BentoEmerald,
                         contentColor = Color.White
                     ),
                     shape = RoundedCornerShape(14.dp)

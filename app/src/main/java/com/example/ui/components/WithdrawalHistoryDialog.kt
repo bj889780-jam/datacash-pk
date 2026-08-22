@@ -171,14 +171,15 @@ fun WithdrawalHistoryDialog(
                                     // Payment Method Brand Thumbnail Badge
                                     Surface(
                                         modifier = Modifier
-                                            .size(width = 46.dp, height = 40.dp)
+                                            .size(44.dp)
                                             .border(
                                                 width = 1.dp,
                                                 color = Color(txn.paymentMethod.brandColorHex).copy(alpha = 0.4f),
-                                                shape = RoundedCornerShape(10.dp)
+                                                shape = RoundedCornerShape(12.dp)
                                             ),
-                                        shape = RoundedCornerShape(10.dp),
-                                        color = Color.White
+                                        shape = RoundedCornerShape(12.dp),
+                                        color = Color.White,
+                                        shadowElevation = 1.dp
                                     ) {
                                         Box(
                                             modifier = Modifier
@@ -190,9 +191,9 @@ fun WithdrawalHistoryDialog(
                                                 PaymentMethod.EASYPAISA -> {
                                                     Image(
                                                         painter = safePainterResource(
-                                                            id = R.drawable.ic_easypaisa_vector
+                                                            id = R.drawable.easypaisa
                                                         ),
-                                                        contentDescription = "EasyPaisa Logo",
+                                                        contentDescription = "EasyPaisa Real Logo",
                                                         modifier = Modifier.fillMaxSize(),
                                                         contentScale = ContentScale.Fit
                                                     )
@@ -200,9 +201,9 @@ fun WithdrawalHistoryDialog(
                                                 PaymentMethod.JAZZCASH -> {
                                                     Image(
                                                         painter = safePainterResource(
-                                                            id = R.drawable.ic_jazzcash_vector
+                                                            id = R.drawable.jazzcash
                                                         ),
-                                                        contentDescription = "JazzCash Logo",
+                                                        contentDescription = "JazzCash Real Logo",
                                                         modifier = Modifier.fillMaxSize(),
                                                         contentScale = ContentScale.Fit
                                                     )

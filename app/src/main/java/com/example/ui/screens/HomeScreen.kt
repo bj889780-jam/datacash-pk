@@ -450,59 +450,93 @@ fun HomeScreen(
             }
         }
 
-        // 3. Dark Slate Exchange Rate Bento Card
+        // 3. Exchange Rate Bento Card (Theme Adaptive)
         item {
             Card(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.outline,
+                        shape = RoundedCornerShape(22.dp)
+                    ),
                 shape = RoundedCornerShape(22.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF0F172A))
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f))
             ) {
-                Row(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 18.dp, vertical = 14.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .padding(horizontal = 18.dp, vertical = 14.dp)
                 ) {
-                    Column {
-                        Text(
-                            text = "CURRENT RATE",
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = Color(0xFF94A3B8),
-                            letterSpacing = 0.8.sp
-                        )
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Text(
-                            text = "3 MB = 1 PKR",
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column {
+                            Text(
+                                text = "CURRENT RATE",
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                letterSpacing = 0.8.sp
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = "0.3 PKR / MB",
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = BentoEmerald
+                            )
+                        }
 
-                    Box(
-                        modifier = Modifier
-                            .height(30.dp)
-                            .width(1.dp)
-                            .background(Color(0xFF334155))
-                    )
+                        Box(
+                            modifier = Modifier
+                                .height(30.dp)
+                                .width(1.dp)
+                                .background(MaterialTheme.colorScheme.outlineVariant)
+                        )
 
-                    Column(horizontalAlignment = Alignment.End) {
-                        Text(
-                            text = "SPEED",
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = Color(0xFF94A3B8),
-                            letterSpacing = 0.8.sp
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                text = "24H CAP",
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                letterSpacing = 0.8.sp
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = "12,000 MB",
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .height(30.dp)
+                                .width(1.dp)
+                                .background(MaterialTheme.colorScheme.outlineVariant)
                         )
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Text(
-                            text = "14.0 MB/s",
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = AccentGold
-                        )
+
+                        Column(horizontalAlignment = Alignment.End) {
+                            Text(
+                                text = "SPEED",
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                letterSpacing = 0.8.sp
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = "14.0 MB/s",
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = AccentGold
+                            )
+                        }
                     }
                 }
             }

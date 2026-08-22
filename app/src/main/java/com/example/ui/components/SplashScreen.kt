@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -59,11 +60,11 @@ fun SplashScreen(
         label = "SplashProgress"
     )
 
-    // Full-screen pure white background (#FFFFFF)
+    // Dynamic background respecting Dark Mode (#121212) and Light Mode (#F8F9FA)
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White),
+            .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -90,7 +91,7 @@ fun SplashScreen(
                 text = "DataCash PK",
                 fontSize = 38.sp,
                 fontWeight = FontWeight.Black,
-                color = Color(0xFF0F172A),
+                color = MaterialTheme.colorScheme.onBackground,
                 letterSpacing = (-0.5).sp
             )
 
@@ -101,7 +102,7 @@ fun SplashScreen(
                 text = "Earn Real PKR from your data",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF64748B),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
 
@@ -114,13 +115,13 @@ fun SplashScreen(
                     modifier = Modifier.size(54.dp),
                     color = BentoBlue,
                     strokeWidth = 4.dp,
-                    trackColor = Color(0xFFF1F5F9)
+                    trackColor = MaterialTheme.colorScheme.surfaceVariant
                 )
                 Text(
                     text = "${(animatedProgress * 100).toInt()}%",
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF334155)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
         }

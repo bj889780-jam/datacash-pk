@@ -20,9 +20,9 @@ val PakistanGreen = Color(0xFF01411C)
 val USABlue = Color(0xFF002868)
 
 // Dark Palette Tones
-val DarkBackground = Color(0xFF0F172A)
-val DarkSurface = Color(0xFF1E293B)
-val DarkSurfaceVariant = Color(0xFF334155)
+val DarkBackground = Color(0xFF121212)
+val DarkSurface = Color(0xFF1E1E1E)
+val DarkSurfaceVariant = Color(0xFF282828)
 
 // Light Palette Tones - Bento Grid Design Theme
 val LightBackground = Color(0xFFF8F9FA)

@@ -89,8 +89,6 @@ fun LoginScreen(
     onGoogleSignIn: () -> Unit,
     onEmailSignIn: (email: String, pass: String) -> Unit,
     onEmailSignUp: (email: String, pass: String, name: String) -> Unit,
-    isDarkTheme: Boolean,
-    onToggleTheme: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -109,23 +107,6 @@ fun LoginScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        // Decorative background gradient circles
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors = if (isDarkTheme) listOf(
-                            Color(0xFF0F172A),
-                            Color(0xFF020617)
-                        ) else listOf(
-                            Color(0xFFF0FDF4),
-                            Color(0xFFF8FAFC)
-                        )
-                    )
-                )
-        )
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -137,14 +118,14 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            // Top Theme Toggle & Branding Header
+            // Top Branding Header
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     // Security pill badge
@@ -155,34 +136,22 @@ fun LoginScreen(
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Shield,
                                 contentDescription = null,
                                 tint = BentoEmerald,
-                                modifier = Modifier.size(14.dp)
+                                modifier = Modifier.size(15.dp)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = "Firebase Cloud Auth",
-                                fontSize = 11.sp,
+                                text = "Firebase Cloud Auth & Data Protection",
+                                fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = BentoEmerald
                             )
                         }
-                    }
-
-                    // Theme toggle
-                    Box(
-                        modifier = Modifier
-                            .size(38.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.surfaceVariant)
-                            .clickable { onToggleTheme() },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(text = if (isDarkTheme) "🌙" else "☀️", fontSize = 16.sp)
                     }
                 }
 
@@ -294,8 +263,8 @@ fun LoginScreen(
                         },
                         enabled = !isLoading,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (isDarkTheme) Color(0xFF1E293B) else Color(0xFFFFFFFF),
-                            contentColor = if (isDarkTheme) Color.White else Color(0xFF1F2937)
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            contentColor = MaterialTheme.colorScheme.onSurface
                         ),
                         border = androidx.compose.foundation.BorderStroke(
                             width = 1.5.dp,

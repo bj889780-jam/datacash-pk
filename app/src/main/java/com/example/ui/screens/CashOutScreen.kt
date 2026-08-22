@@ -1,5 +1,6 @@
 package com.example.ui.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -24,6 +25,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.filled.AccountBalanceWallet
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
@@ -42,6 +44,8 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -57,6 +61,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.R
@@ -81,11 +86,9 @@ fun CashOutScreen(
     var selectedMethod by remember { mutableStateOf(PaymentMethod.EASYPAISA) }
     var selectedBank by remember { mutableStateOf("Meezan Bank") }
     var bankDropdownExpanded by remember { mutableStateOf(false) }
-    var accountHolder by remember(uiState.userProfile.name) {
-        mutableStateOf(uiState.userProfile.name.ifBlank { "DataCash User" })
-    }
-    var accountNumber by remember { mutableStateOf("03001234567") }
-    var amountText by remember { mutableStateOf("500") }
+    var accountHolder by remember { mutableStateOf("") }
+    var accountNumber by remember { mutableStateOf("") }
+    var amountText by remember { mutableStateOf("") }
 
     val pakistaniBanks = listOf(
         "Meezan Bank",
@@ -161,9 +164,9 @@ fun CashOutScreen(
             }
         }
 
-        // 2. Payment Methods Selection (EasyPaisa, JazzCash, Bank Transfer)
+        // 2. Payment Methods Selection (Easypaisa, JazzCash, Bank Transfer)
         item {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text(
                     text = "SELECT PAYMENT METHOD",
                     fontSize = 11.sp,
@@ -186,93 +189,102 @@ fun CashOutScreen(
                                 .clickable { selectedMethod = method }
                                 .border(
                                     width = if (isSelected) 2.dp else 1.dp,
-                                    color = if (isSelected) brandColor else MaterialTheme.colorScheme.outline,
-                                    shape = RoundedCornerShape(20.dp)
+                                    color = if (isSelected) brandColor else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                                    shape = RoundedCornerShape(16.dp)
                                 ),
-                            shape = RoundedCornerShape(20.dp),
+                            shape = RoundedCornerShape(16.dp),
                             colors = CardDefaults.cardColors(
-                                containerColor = if (isSelected) brandColor.copy(alpha = 0.12f)
-                                else MaterialTheme.colorScheme.surface
-                            )
+                                containerColor = if (isSelected) brandColor.copy(alpha = 0.08f) else Color.White
+                            ),
+                            elevation = CardDefaults.cardElevation(defaultElevation = if (isSelected) 3.dp else 1.dp)
                         ) {
-                            Column(
+                            Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(vertical = 14.dp, horizontal = 8.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally
+                                    .padding(vertical = 12.dp, horizontal = 6.dp)
                             ) {
-                                Box(
-                                    modifier = Modifier
-                                        .height(40.dp)
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 2.dp),
-                                    contentAlignment = Alignment.Center
+                                if (isSelected) {
+                                    Box(
+                                        modifier = Modifier
+                                            .align(Alignment.TopEnd)
+                                            .size(16.dp)
+                                            .clip(CircleShape)
+                                            .background(brandColor),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Check,
+                                            contentDescription = "Selected",
+                                            tint = Color.White,
+                                            modifier = Modifier.size(10.dp)
+                                        )
+                                    }
+                                }
+
+                                Column(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
                                 ) {
-                                    when (method) {
-                                        PaymentMethod.EASYPAISA -> {
-                                            Image(
-                                                painter = safePainterResource(
-                                                    id = R.drawable.ic_easypaisa_logo
-                                                ),
-                                                contentDescription = "EasyPaisa Official Logo",
-                                                modifier = Modifier
-                                                    .fillMaxSize()
-                                                    .clip(RoundedCornerShape(10.dp)),
-                                                contentScale = ContentScale.Fit
-                                            )
-                                        }
-                                        PaymentMethod.JAZZCASH -> {
-                                            Image(
-                                                painter = safePainterResource(
-                                                    id = R.drawable.ic_jazzcash_logo
-                                                ),
-                                                contentDescription = "JazzCash Official Logo",
-                                                modifier = Modifier
-                                                    .fillMaxSize()
-                                                    .clip(RoundedCornerShape(10.dp)),
-                                                contentScale = ContentScale.Fit
-                                            )
-                                        }
-                                        PaymentMethod.BANK_TRANSFER -> {
-                                            Surface(
-                                                modifier = Modifier
-                                                    .fillMaxSize()
-                                                    .clip(RoundedCornerShape(10.dp)),
-                                                shape = RoundedCornerShape(10.dp),
-                                                color = brandColor
-                                            ) {
-                                                Row(
-                                                    verticalAlignment = Alignment.CenterVertically,
-                                                    horizontalArrangement = Arrangement.Center,
-                                                    modifier = Modifier.fillMaxSize()
+                                    // Properly centered, fitted logo
+                                    Box(
+                                        modifier = Modifier
+                                            .size(46.dp)
+                                            .padding(2.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        when (method) {
+                                            PaymentMethod.EASYPAISA -> {
+                                                Image(
+                                                    painter = safePainterResource(
+                                                        id = R.drawable.easypaisa
+                                                    ),
+                                                    contentDescription = "Easypaisa",
+                                                    modifier = Modifier.fillMaxSize(),
+                                                    contentScale = ContentScale.Fit
+                                                )
+                                            }
+                                            PaymentMethod.JAZZCASH -> {
+                                                Image(
+                                                    painter = safePainterResource(
+                                                        id = R.drawable.jazzcash
+                                                    ),
+                                                    contentDescription = "JazzCash",
+                                                    modifier = Modifier.fillMaxSize(),
+                                                    contentScale = ContentScale.Fit
+                                                )
+                                            }
+                                            PaymentMethod.BANK_TRANSFER -> {
+                                                Box(
+                                                    modifier = Modifier
+                                                        .fillMaxSize()
+                                                        .clip(CircleShape)
+                                                        .background(brandColor.copy(alpha = 0.12f)),
+                                                    contentAlignment = Alignment.Center
                                                 ) {
                                                     Icon(
                                                         imageVector = Icons.Default.AccountBalance,
-                                                        contentDescription = "Bank Transfer Logo",
-                                                        tint = Color.White,
-                                                        modifier = Modifier.size(18.dp)
-                                                    )
-                                                    Spacer(modifier = Modifier.width(4.dp))
-                                                    Text(
-                                                        text = "BANK",
-                                                        fontSize = 11.sp,
-                                                        fontWeight = FontWeight.ExtraBold,
-                                                        color = Color.White
+                                                        contentDescription = "Bank Transfer",
+                                                        tint = brandColor,
+                                                        modifier = Modifier.size(24.dp)
                                                     )
                                                 }
                                             }
                                         }
                                     }
+
+                                    Spacer(modifier = Modifier.height(8.dp))
+
+                                    // Name directly below each option/logo
+                                    Text(
+                                        text = method.title,
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = if (isSelected) brandColor else MaterialTheme.colorScheme.onSurface,
+                                        textAlign = TextAlign.Center,
+                                        maxLines = 1
+                                    )
                                 }
-
-                                Spacer(modifier = Modifier.height(6.dp))
-
-                                Text(
-                                    text = method.title,
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
                             }
                         }
                     }
@@ -299,13 +311,63 @@ fun CashOutScreen(
                         .padding(18.dp),
                     verticalArrangement = Arrangement.spacedBy(14.dp)
                 ) {
-                    Text(
-                        text = "WITHDRAWAL DETAILS (${selectedMethod.title.uppercase()})",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        letterSpacing = 1.sp
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = "WITHDRAWAL DETAILS (${selectedMethod.title.uppercase()})",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            letterSpacing = 1.sp
+                        )
+
+                        // Small provider indicator in card header
+                        Surface(
+                            modifier = Modifier
+                                .size(28.dp)
+                                .clip(RoundedCornerShape(8.dp)),
+                            shape = RoundedCornerShape(8.dp),
+                            color = Color.White,
+                            border = BorderStroke(1.dp, Color(0xFFE2E8F0))
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(2.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                when (selectedMethod) {
+                                    PaymentMethod.EASYPAISA -> {
+                                        Image(
+                                            painter = safePainterResource(id = R.drawable.easypaisa),
+                                            contentDescription = "EasyPaisa",
+                                            modifier = Modifier.fillMaxSize(),
+                                            contentScale = ContentScale.Fit
+                                        )
+                                    }
+                                    PaymentMethod.JAZZCASH -> {
+                                        Image(
+                                            painter = safePainterResource(id = R.drawable.jazzcash),
+                                            contentDescription = "JazzCash",
+                                            modifier = Modifier.fillMaxSize(),
+                                            contentScale = ContentScale.Fit
+                                        )
+                                    }
+                                    PaymentMethod.BANK_TRANSFER -> {
+                                        Icon(
+                                            imageVector = Icons.Default.AccountBalance,
+                                            contentDescription = "Bank",
+                                            tint = Color(selectedMethod.brandColorHex),
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
 
                     if (selectedMethod == PaymentMethod.BANK_TRANSFER) {
                         ExposedDropdownMenuBox(
@@ -355,6 +417,7 @@ fun CashOutScreen(
                         value = accountHolder,
                         onValueChange = { accountHolder = it },
                         label = { Text("Account Holder Name") },
+                        placeholder = { Text("Enter account title name") },
                         leadingIcon = { Icon(imageVector = Icons.Default.Person, contentDescription = null) },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(14.dp),
@@ -365,6 +428,7 @@ fun CashOutScreen(
                         value = accountNumber,
                         onValueChange = { accountNumber = it },
                         label = { Text(if (selectedMethod == PaymentMethod.BANK_TRANSFER) "IBAN / Account Number" else "Mobile Number") },
+                        placeholder = { Text(if (selectedMethod == PaymentMethod.BANK_TRANSFER) "PK00XXXX0000000000000000" else "03XXXXXXXXX") },
                         leadingIcon = { Icon(imageVector = Icons.Default.Phone, contentDescription = null) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.fillMaxWidth(),
@@ -372,13 +436,14 @@ fun CashOutScreen(
                         singleLine = true
                     )
 
-                    val isOverLimit = (amountText.toDoubleOrNull() ?: 0.0) > 10000.0
+                    val isOverLimit = (amountText.toDoubleOrNull() ?: 0.0) > 3500.0
 
                     Column {
                         OutlinedTextField(
                             value = amountText,
                             onValueChange = { amountText = it },
                             label = { Text("Withdrawal Amount (PKR)") },
+                            placeholder = { Text("Enter amount in PKR") },
                             leadingIcon = { Icon(imageVector = Icons.Default.Receipt, contentDescription = null) },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             isError = isOverLimit,
@@ -389,7 +454,7 @@ fun CashOutScreen(
                         if (isOverLimit) {
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Notice: The maximum withdrawal limit is PKR 10,000 per request.",
+                                text = "Notice: Daily withdrawal limit is Rs. 3,500. Remaining wallet balance can be withdrawn after 24 hours.",
                                 color = StopRed,
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold
@@ -397,7 +462,7 @@ fun CashOutScreen(
                         } else {
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Max limit: PKR 10,000 per request (Unlimited MB sales allowed)",
+                                text = "Max limit: PKR 3,500 per 24 hours",
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                                 fontSize = 11.sp
                             )
@@ -410,7 +475,7 @@ fun CashOutScreen(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        listOf(200, 500, 1000, 2000, 5000, 10000).forEach { preset ->
+                        listOf(200, 500, 1000, 1500, 2500, 3500).forEach { preset ->
                             Surface(
                                 shape = RoundedCornerShape(14.dp),
                                 color = if (amountText == preset.toString()) ActiveYellow else MaterialTheme.colorScheme.surfaceVariant,
@@ -429,12 +494,12 @@ fun CashOutScreen(
                             shape = RoundedCornerShape(14.dp),
                             color = MaterialTheme.colorScheme.surfaceVariant,
                             modifier = Modifier.clickable { 
-                                val maxBal = uiState.availableBalance.toInt().coerceAtMost(10000)
+                                val maxBal = uiState.availableBalance.toInt().coerceAtMost(3500)
                                 amountText = if (maxBal > 0) maxBal.toString() else "200"
                             }
                         ) {
                             Text(
-                                text = "Max (10k)",
+                                text = "Max (3.5k)",
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.ExtraBold,
                                 color = BentoEmerald,
@@ -532,7 +597,7 @@ fun CashOutScreen(
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "• Minimum Withdrawal: PKR 200\n• Maximum Daily Limit: PKR 10,000\n• Processing Time: 1 Hour (Direct to EasyPaisa / JazzCash / Bank)",
+                        text = "• Minimum Withdrawal: PKR 200\n• Maximum Daily Limit: PKR 3,500 per 24 hours\n• Processing Time: 1 Hour (Direct to EasyPaisa / JazzCash / Bank)\n• 24-Hour Selling Cap: 12,000 MBs (Max Rs. 3,600 / 24 hrs)",
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         lineHeight = 18.sp

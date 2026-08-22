@@ -14,8 +14,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Celebration
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -33,7 +36,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ui.theme.AccentGold
-import com.example.ui.theme.EmeraldGreen
+import com.example.ui.theme.BentoEmerald
 import kotlin.random.Random
 
 private data class Particle(
@@ -49,32 +52,33 @@ private data class Particle(
 @Composable
 fun ConfettiBalloonsOverlay(
     message: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onDismiss: () -> Unit = {}
 ) {
     val progress = remember { Animatable(0f) }
 
     LaunchedEffect(Unit) {
         progress.animateTo(
             targetValue = 1f,
-            animationSpec = tween(durationMillis = 3000, easing = LinearEasing)
+            animationSpec = tween(durationMillis = 2500, easing = LinearEasing)
         )
     }
 
-    // Generate fixed set of 60 colourful confetti and balloon particles
+    // Generate fixed set of colourful confetti and balloon particles
     val particles = remember {
         val colors = listOf(
-            EmeraldGreen, AccentGold, Color(0xFFDC2626), Color(0xFF0284C7),
+            BentoEmerald, AccentGold, Color(0xFFDC2626), Color(0xFF0284C7),
             Color(0xFF9333EA), Color(0xFFEA580C), Color(0xFF16A34A)
         )
-        List(70) {
+        List(50) {
             Particle(
                 xRatio = Random.nextFloat(),
                 startYRatio = if (Random.nextBoolean()) -0.2f else 1.2f,
                 speed = Random.floatInRange(0.8f, 1.6f),
-                sizePx = Random.floatInRange(12f, 32f),
+                sizePx = Random.floatInRange(12f, 28f),
                 color = colors[Random.nextInt(colors.size)],
                 isBalloon = Random.nextBoolean(),
-                swayAmplitude = Random.floatInRange(15f, 40f)
+                swayAmplitude = Random.floatInRange(15f, 35f)
             )
         }
     }
@@ -82,7 +86,12 @@ fun ConfettiBalloonsOverlay(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.65f)),
+            .background(Color.Black.copy(alpha = 0.7f))
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onDismiss
+            ),
         contentAlignment = Alignment.Center
     ) {
         // Particles Canvas
@@ -117,7 +126,6 @@ fun ConfettiBalloonsOverlay(
                 } else {
                     // Confetti piece falls downwards
                     val curY = -0.1f * canvasHeight + (currentProgress * particle.speed * canvasHeight * 1.3f)
-                    val rotationDeg = currentProgress * 720f
 
                     drawRect(
                         color = particle.color,
@@ -134,7 +142,8 @@ fun ConfettiBalloonsOverlay(
                 .padding(24.dp)
                 .shadow(24.dp, RoundedCornerShape(24.dp)),
             shape = RoundedCornerShape(24.dp),
-            color = Color.White
+            color = MaterialTheme.colorScheme.surface,
+            tonalElevation = 6.dp
         ) {
             Column(
                 modifier = Modifier.padding(28.dp),
@@ -142,7 +151,7 @@ fun ConfettiBalloonsOverlay(
             ) {
                 Surface(
                     shape = CircleShape,
-                    color = Color(0xFFFEF3C7),
+                    color = AccentGold.copy(alpha = 0.15f),
                     modifier = Modifier.size(72.dp)
                 ) {
                     Box(contentAlignment = Alignment.Center) {
@@ -161,7 +170,7 @@ fun ConfettiBalloonsOverlay(
                     text = "🎉 CASH OUT SUCCESS!",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.ExtraBold,
-                    color = EmeraldGreen,
+                    color = BentoEmerald,
                     textAlign = TextAlign.Center
                 )
 
@@ -171,7 +180,7 @@ fun ConfettiBalloonsOverlay(
                     text = message,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF0F172A),
+                    color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center
                 )
 
@@ -181,7 +190,7 @@ fun ConfettiBalloonsOverlay(
                     text = "Adding earnings to your Main Balance...",
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color(0xFF64748B),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
                 )
             }
