@@ -80,7 +80,7 @@ import com.example.ui.theme.StopRed
 @Composable
 fun CashOutScreen(
     uiState: DataCashUiState,
-    onWithdrawSubmit: (PaymentMethod, String, String, String) -> Unit,
+    onWithdrawSubmit: (PaymentMethod, String, String, String) -> Boolean,
     modifier: Modifier = Modifier
 ) {
     var selectedMethod by remember { mutableStateOf(PaymentMethod.EASYPAISA) }
@@ -189,25 +189,26 @@ fun CashOutScreen(
                                 .clickable { selectedMethod = method }
                                 .border(
                                     width = if (isSelected) 2.dp else 1.dp,
-                                    color = if (isSelected) brandColor else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
-                                    shape = RoundedCornerShape(16.dp)
+                                    color = if (isSelected) brandColor else MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
+                                    shape = RoundedCornerShape(18.dp)
                                 ),
-                            shape = RoundedCornerShape(16.dp),
+                            shape = RoundedCornerShape(18.dp),
                             colors = CardDefaults.cardColors(
-                                containerColor = if (isSelected) brandColor.copy(alpha = 0.08f) else Color.White
+                                containerColor = if (isSelected) brandColor.copy(alpha = 0.08f) else MaterialTheme.colorScheme.surface
                             ),
                             elevation = CardDefaults.cardElevation(defaultElevation = if (isSelected) 3.dp else 1.dp)
                         ) {
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(vertical = 12.dp, horizontal = 6.dp)
+                                    .padding(vertical = 14.dp, horizontal = 6.dp)
                             ) {
                                 if (isSelected) {
                                     Box(
                                         modifier = Modifier
                                             .align(Alignment.TopEnd)
-                                            .size(16.dp)
+                                            .padding(end = 2.dp)
+                                            .size(18.dp)
                                             .clip(CircleShape)
                                             .background(brandColor),
                                         contentAlignment = Alignment.Center
@@ -216,7 +217,7 @@ fun CashOutScreen(
                                             imageVector = Icons.Default.Check,
                                             contentDescription = "Selected",
                                             tint = Color.White,
-                                            modifier = Modifier.size(10.dp)
+                                            modifier = Modifier.size(11.dp)
                                         )
                                     }
                                 }
@@ -226,48 +227,60 @@ fun CashOutScreen(
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     verticalArrangement = Arrangement.Center
                                 ) {
-                                    // Properly centered, fitted logo
-                                    Box(
-                                        modifier = Modifier
-                                            .size(46.dp)
-                                            .padding(2.dp),
-                                        contentAlignment = Alignment.Center
+                                    // High contrast, rounded white container so Easypaisa & JazzCash logos are crystal clear in BOTH Light and Dark modes
+                                    Surface(
+                                        modifier = Modifier.size(54.dp),
+                                        shape = RoundedCornerShape(16.dp),
+                                        color = Color.White,
+                                        border = BorderStroke(1.2.dp, if (isSelected) brandColor.copy(alpha = 0.6f) else Color(0xFFE2E8F0)),
+                                        shadowElevation = if (isSelected) 3.dp else 1.5.dp
                                     ) {
-                                        when (method) {
-                                            PaymentMethod.EASYPAISA -> {
-                                                Image(
-                                                    painter = safePainterResource(
-                                                        id = R.drawable.easypaisa
-                                                    ),
-                                                    contentDescription = "Easypaisa",
-                                                    modifier = Modifier.fillMaxSize(),
-                                                    contentScale = ContentScale.Fit
-                                                )
-                                            }
-                                            PaymentMethod.JAZZCASH -> {
-                                                Image(
-                                                    painter = safePainterResource(
-                                                        id = R.drawable.jazzcash
-                                                    ),
-                                                    contentDescription = "JazzCash",
-                                                    modifier = Modifier.fillMaxSize(),
-                                                    contentScale = ContentScale.Fit
-                                                )
-                                            }
-                                            PaymentMethod.BANK_TRANSFER -> {
-                                                Box(
-                                                    modifier = Modifier
-                                                        .fillMaxSize()
-                                                        .clip(CircleShape)
-                                                        .background(brandColor.copy(alpha = 0.12f)),
-                                                    contentAlignment = Alignment.Center
-                                                ) {
-                                                    Icon(
-                                                        imageVector = Icons.Default.AccountBalance,
-                                                        contentDescription = "Bank Transfer",
-                                                        tint = brandColor,
-                                                        modifier = Modifier.size(24.dp)
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .padding(5.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            when (method) {
+                                                PaymentMethod.EASYPAISA -> {
+                                                    Image(
+                                                        painter = safePainterResource(
+                                                            id = R.drawable.easypaisa
+                                                        ),
+                                                        contentDescription = "Easypaisa",
+                                                        modifier = Modifier
+                                                            .fillMaxSize()
+                                                            .padding(2.dp),
+                                                        contentScale = ContentScale.Fit
                                                     )
+                                                }
+                                                PaymentMethod.JAZZCASH -> {
+                                                    Image(
+                                                        painter = safePainterResource(
+                                                            id = R.drawable.jazzcash
+                                                        ),
+                                                        contentDescription = "JazzCash",
+                                                        modifier = Modifier
+                                                            .fillMaxSize()
+                                                            .padding(2.dp),
+                                                        contentScale = ContentScale.Fit
+                                                    )
+                                                }
+                                                PaymentMethod.BANK_TRANSFER -> {
+                                                    Box(
+                                                        modifier = Modifier
+                                                            .fillMaxSize()
+                                                            .clip(CircleShape)
+                                                            .background(brandColor.copy(alpha = 0.12f)),
+                                                        contentAlignment = Alignment.Center
+                                                    ) {
+                                                        Icon(
+                                                            imageVector = Icons.Default.AccountBalance,
+                                                            contentDescription = "Bank Transfer",
+                                                            tint = brandColor,
+                                                            modifier = Modifier.size(26.dp)
+                                                        )
+                                                    }
                                                 }
                                             }
                                         }
@@ -615,7 +628,10 @@ fun CashOutScreen(
                     } else {
                         accountNumber
                     }
-                    onWithdrawSubmit(selectedMethod, accountHolder, finalAccountNo, amountText)
+                    val isSuccess = onWithdrawSubmit(selectedMethod, accountHolder, finalAccountNo, amountText)
+                    if (isSuccess) {
+                        amountText = ""
+                    }
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = ActiveYellow,

@@ -58,6 +58,7 @@ import com.example.ui.components.BottomNavBar
 import com.example.ui.components.ConfettiBalloonsOverlay
 import com.example.ui.components.HeaderBar
 import com.example.ui.components.SplashScreen
+import com.example.ui.components.WithdrawalConfirmationDialog
 import com.example.ui.screens.CashOutScreen
 import com.example.ui.screens.HomeScreen
 import com.example.ui.screens.LoginScreen
@@ -123,6 +124,7 @@ class MainActivity : ComponentActivity() {
                                     viewModel.submitWithdrawal(method, holder, number, amount)
                                 },
                                 onConfirmWithdrawal = { viewModel.confirmPendingWithdrawal() },
+                                onCancelWithdrawal = { viewModel.cancelPendingWithdrawal() },
                                 onClearNotice = { viewModel.clearUserNotice() },
                                 onOpenAuth = { isSignUp -> viewModel.openAuthDialog(isSignUp) },
                                 onCloseAuth = { viewModel.closeAuthDialog() },
@@ -187,6 +189,7 @@ fun DataCashMainApp(
     onResetSelling: () -> Unit,
     onWithdrawSubmit: (com.example.data.PaymentMethod, String, String, String) -> Boolean,
     onConfirmWithdrawal: () -> Unit,
+    onCancelWithdrawal: () -> Unit,
     onClearNotice: () -> Unit,
     onOpenAuth: (Boolean) -> Unit,
     onCloseAuth: () -> Unit,
@@ -361,42 +364,32 @@ fun DataCashMainApp(
             )
         }
 
-        // Dialog alert for user notice if active
-        uiState.userNoticeMessage?.let { notice ->
-            val isPendingConfirmation = uiState.pendingWithdrawalRecord != null
+        // Fullscreen Withdrawal Confirmation Dialog
+        uiState.pendingWithdrawalRecord?.let { pendingRecord ->
+            WithdrawalConfirmationDialog(
+                record = pendingRecord,
+                onDismiss = onCancelWithdrawal,
+                onConfirm = onConfirmWithdrawal
+            )
+        }
 
-            AlertDialog(
-                onDismissRequest = onClearNotice,
-                title = { Text("DataCash PK Notification", fontWeight = FontWeight.Bold) },
-                text = { Text(notice) },
-                confirmButton = {
-                    Button(
-                        onClick = {
-                            if (isPendingConfirmation) {
-                                onConfirmWithdrawal()
-                                scope.launch {
-                                    snackbarHostState.showSnackbar(
-                                        message = "⚡ Request Successful! Your withdrawal is pending approval. You can check the status in your cash-out history.",
-                                        duration = SnackbarDuration.Short
-                                    )
-                                }
-                            } else {
-                                onClearNotice()
-                            }
-                        },
-                        colors = ButtonDefaults.buttonColors(containerColor = BentoEmerald)
-                    ) {
-                        Text("OK", fontWeight = FontWeight.Bold)
-                    }
-                },
-                dismissButton = if (isPendingConfirmation) {
-                    @Composable {
-                        OutlinedButton(onClick = onClearNotice) {
-                            Text("Cancel", fontWeight = FontWeight.Bold)
+        // Dialog alert for user notice if active (when not showing confirmation dialog)
+        if (uiState.pendingWithdrawalRecord == null) {
+            uiState.userNoticeMessage?.let { notice ->
+                AlertDialog(
+                    onDismissRequest = onClearNotice,
+                    title = { Text("DataCash PK Notification", fontWeight = FontWeight.Bold) },
+                    text = { Text(notice) },
+                    confirmButton = {
+                        Button(
+                            onClick = onClearNotice,
+                            colors = ButtonDefaults.buttonColors(containerColor = BentoEmerald)
+                        ) {
+                            Text("OK", fontWeight = FontWeight.Bold)
                         }
                     }
-                } else null
-            )
+                )
+            }
         }
     }
 }
