@@ -176,6 +176,31 @@ class FirebaseRepository(private val context: Context? = null) {
         }
     }
 
+    suspend fun sendPasswordResetEmail(email: String, ctx: Context? = null): Result<Unit> {
+        ensureFirebaseInitialized(ctx)
+        val authInstance = auth
+        if (authInstance == null) {
+            return Result.failure(Exception("Authentication service unavailable. Please check connection."))
+        }
+        return try {
+            val taskResult = withTimeoutOrNull(8000L) {
+                authInstance.sendPasswordResetEmail(email.trim()).await()
+            }
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e("FirebaseRepository", "Password reset error", e)
+            val msg = e.localizedMessage ?: ""
+            val friendlyMsg = when {
+                msg.contains("no user record", ignoreCase = true) || msg.contains("user-not-found", ignoreCase = true) ->
+                    "No registered account found with this email address."
+                msg.contains("badly formatted", ignoreCase = true) || msg.contains("invalid email", ignoreCase = true) ->
+                    "Please enter a valid email address."
+                else -> msg.ifBlank { "Could not send password reset email. Please try again." }
+            }
+            Result.failure(Exception(friendlyMsg))
+        }
+    }
+
     suspend fun signInWithGoogleCredential(idToken: String, ctx: Context? = null): Result<FirebaseUser> {
         ensureFirebaseInitialized(ctx)
         val authInstance = auth

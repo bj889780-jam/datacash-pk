@@ -12,7 +12,17 @@ data class UserProfile(
     val isVerified: Boolean = true
 ) {
     val avatarInitial: String
-        get() = name.trim().firstOrNull()?.uppercase() ?: "D"
+        get() {
+            val trimmedName = name.trim()
+            if (trimmedName.isNotBlank() && !trimmedName.equals("DataCash User", ignoreCase = true)) {
+                return trimmedName.first().uppercase()
+            }
+            val trimmedEmail = email.trim()
+            if (trimmedEmail.isNotBlank()) {
+                return trimmedEmail.first().uppercase()
+            }
+            return "D"
+        }
 }
 
 enum class NavigationTab(val title: String, val route: String) {

@@ -58,8 +58,8 @@ object SessionManager {
 
     fun getUserProfile(context: Context): UserProfile {
         val prefs = getPrefs(context)
-        val name = prefs.getString(KEY_NAME, "Bilal Iqbal Jamali") ?: "Bilal Iqbal Jamali"
-        val email = prefs.getString(KEY_EMAIL, "bj889780@gmail.com") ?: "bj889780@gmail.com"
+        val name = prefs.getString(KEY_NAME, "DataCash User") ?: "DataCash User"
+        val email = prefs.getString(KEY_EMAIL, "user@datacash.pk") ?: "user@datacash.pk"
         val photoUrl = prefs.getString(KEY_PHOTO_URL, null)?.ifEmpty { null }
         return UserProfile(
             name = name,

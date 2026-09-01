@@ -43,6 +43,7 @@ data class DataCashUiState(
     val authUserUid: String? = null,
     val isAuthLoading: Boolean = false,
     val authErrorMessage: String? = null,
+    val authSuccessMessage: String? = null,
     val showAuthDialog: Boolean = false,
     val isSignUpMode: Boolean = false,
     val cloudSyncStatus: String = "Cloud & Local Sync Ready",
@@ -438,6 +439,55 @@ class DataCashViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    fun sendPasswordReset(email: String, context: Context? = null) {
+        viewModelScope.launch {
+            val trimmedEmail = email.trim()
+            if (trimmedEmail.isBlank() || !trimmedEmail.contains("@") || !trimmedEmail.contains(".")) {
+                _uiState.update {
+                    it.copy(
+                        authErrorMessage = "Please enter a valid email address to reset password.",
+                        authSuccessMessage = null
+                    )
+                }
+                return@launch
+            }
+
+            _uiState.update { it.copy(isAuthLoading = true, authErrorMessage = null, authSuccessMessage = null) }
+            try {
+                val result = firebaseRepository.sendPasswordResetEmail(trimmedEmail, context)
+                result.onSuccess {
+                    _uiState.update {
+                        it.copy(
+                            isAuthLoading = false,
+                            authErrorMessage = null,
+                            authSuccessMessage = "Password reset instructions sent to $trimmedEmail. Check your inbox to proceed."
+                        )
+                    }
+                }.onFailure { error ->
+                    _uiState.update {
+                        it.copy(
+                            isAuthLoading = false,
+                            authErrorMessage = error.localizedMessage ?: "Failed to send password reset email.",
+                            authSuccessMessage = null
+                        )
+                    }
+                }
+            } catch (e: Throwable) {
+                _uiState.update {
+                    it.copy(
+                        isAuthLoading = false,
+                        authErrorMessage = e.localizedMessage ?: "Failed to send password reset email.",
+                        authSuccessMessage = null
+                    )
+                }
+            }
+        }
+    }
+
+    fun clearAuthMessages() {
+        _uiState.update { it.copy(authErrorMessage = null, authSuccessMessage = null) }
+    }
+
     fun signInWithGoogle(context: Context) {
         viewModelScope.launch {
             _uiState.update { it.copy(isAuthLoading = true, authErrorMessage = null) }
@@ -503,27 +553,48 @@ class DataCashViewModel(application: Application) : AndroidViewModel(application
                 Log.d("DataCashViewModel", "Google Sign-In canceled by user")
                 _uiState.update { it.copy(isAuthLoading = false) }
             } catch (e: androidx.credentials.exceptions.NoCredentialException) {
-                Log.w("DataCashViewModel", "NoCredentialException: Device/Emulator has no Google account registered in settings. Completing sign-in.")
-                delay(300L)
-                val userEmail = "bj889780@gmail.com"
-                val userName = "Bilal Iqbal Jamali"
-                val uid = "google-uid-${userEmail.hashCode().toString().replace("-", "")}"
-                completeSuccessfulSignIn(uid, userName, userEmail, null)
+                Log.w("DataCashViewModel", "NoCredentialException: No Google accounts found on device")
+                _uiState.update {
+                    it.copy(
+                        isAuthLoading = false,
+                        authErrorMessage = "No Google account found on this device. Please sign in with email/password or add a Google account in Android Settings."
+                    )
+                }
+            } catch (e: androidx.credentials.exceptions.GetCredentialCustomException) {
+                val msg = e.localizedMessage ?: ""
+                Log.w("DataCashViewModel", "GetCredentialCustomException: $msg", e)
+                if (msg.contains("cancel", ignoreCase = true) || msg.contains("16", ignoreCase = true)) {
+                    _uiState.update { it.copy(isAuthLoading = false) }
+                } else {
+                    _uiState.update {
+                        it.copy(
+                            isAuthLoading = false,
+                            authErrorMessage = "Google Sign-In was not completed. Please try again or use Email & Password."
+                        )
+                    }
+                }
+            } catch (e: androidx.credentials.exceptions.GetCredentialException) {
+                val msg = e.localizedMessage ?: ""
+                Log.w("DataCashViewModel", "GetCredentialException: $msg", e)
+                if (msg.contains("cancel", ignoreCase = true) || msg.contains("16", ignoreCase = true)) {
+                    _uiState.update { it.copy(isAuthLoading = false) }
+                } else {
+                    _uiState.update {
+                        it.copy(
+                            isAuthLoading = false,
+                            authErrorMessage = if (msg.isNotBlank()) "Google Sign-In error: $msg" else "Google Sign-In failed. Please try again or use Email login."
+                        )
+                    }
+                }
             } catch (e: Throwable) {
                 val msg = e.localizedMessage ?: ""
-                if (msg.contains("cancel", ignoreCase = true) || msg.contains("16", ignoreCase = true)) {
-                    // User canceled
-                    _uiState.update { it.copy(isAuthLoading = false) }
-                } else if (msg.contains("No credentials available", ignoreCase = true) ||
-                    msg.contains("NoCredential", ignoreCase = true) ||
-                    e.javaClass.name.contains("NoCredential", ignoreCase = true)
+                val className = e.javaClass.name
+                if (msg.contains("cancel", ignoreCase = true) ||
+                    msg.contains("16", ignoreCase = true) ||
+                    className.contains("Cancellation", ignoreCase = true)
                 ) {
-                    Log.w("DataCashViewModel", "No credentials available fallback. Completing sign-in.")
-                    delay(300L)
-                    val userEmail = "bj889780@gmail.com"
-                    val userName = "Bilal Iqbal Jamali"
-                    val uid = "google-uid-${userEmail.hashCode().toString().replace("-", "")}"
-                    completeSuccessfulSignIn(uid, userName, userEmail, null)
+                    Log.d("DataCashViewModel", "Google Sign-In canceled or dismissed by user")
+                    _uiState.update { it.copy(isAuthLoading = false) }
                 } else {
                     Log.e("DataCashViewModel", "signInWithGoogle error", e)
                     _uiState.update {

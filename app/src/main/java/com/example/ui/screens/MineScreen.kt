@@ -76,9 +76,13 @@ import com.example.ui.theme.EmeraldGreen
 import com.example.ui.theme.StopRed
 
 import androidx.compose.material.icons.filled.CloudDone
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.filled.Login
 import androidx.compose.material.icons.filled.AdminPanelSettings
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
 
 import androidx.compose.material.icons.filled.History
 import com.example.ui.components.WithdrawalHistoryDialog
@@ -89,6 +93,7 @@ fun MineScreen(
     onOpenAuth: (isSignUp: Boolean) -> Unit,
     onLogoutConfirmed: () -> Unit,
     onOpenAdminPin: () -> Unit,
+    onResetPassword: (email: String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -97,6 +102,9 @@ fun MineScreen(
     var showWithdrawalHistoryDialog by remember { mutableStateOf(false) }
     var showPrivacyPolicyDialog by remember { mutableStateOf(false) }
     var showAppSettingsDialog by remember { mutableStateOf(false) }
+    var showPasswordResetDialog by remember { mutableStateOf(false) }
+    var resetEmailInput by remember(uiState.userProfile.email) { mutableStateOf(uiState.userProfile.email) }
+    var resetSentConfirmation by remember { mutableStateOf(false) }
 
     LazyColumn(
         modifier = modifier
@@ -526,6 +534,65 @@ fun MineScreen(
                                 )
                                 Text(
                                     text = "Preferences, background sharing & cache",
+                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // 3. Password Reset List Tile
+                    Surface(
+                        onClick = {
+                            resetEmailInput = uiState.userProfile.email
+                            resetSentConfirmation = false
+                            showPasswordResetDialog = true
+                        },
+                        shape = RoundedCornerShape(16.dp),
+                        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(14.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Surface(
+                                shape = CircleShape,
+                                color = AccentGold.copy(alpha = 0.25f),
+                                modifier = Modifier.size(38.dp)
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        imageVector = Icons.Default.Lock,
+                                        contentDescription = "Password Reset",
+                                        tint = Color(0xFFB78103),
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.width(12.dp))
+
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = "Reset / Change Password",
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                                Text(
+                                    text = "Send password reset instructions to email",
                                     fontSize = 12.sp,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -1022,6 +1089,117 @@ fun MineScreen(
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Text("Close", fontWeight = FontWeight.Bold)
+                }
+            }
+        )
+    }
+
+    // Password Reset Dialog
+    if (showPasswordResetDialog) {
+        AlertDialog(
+            onDismissRequest = { showPasswordResetDialog = false },
+            icon = {
+                Surface(
+                    shape = CircleShape,
+                    color = AccentGold.copy(alpha = 0.2f),
+                    modifier = Modifier.size(48.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Default.Lock,
+                            contentDescription = null,
+                            tint = Color(0xFFB78103),
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                }
+            },
+            title = {
+                Text(
+                    text = "Reset Password",
+                    fontWeight = FontWeight.Black,
+                    fontSize = 18.sp,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            },
+            text = {
+                Column(
+                    modifier = Modifier.padding(vertical = 4.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    if (resetSentConfirmation) {
+                        Surface(
+                            shape = RoundedCornerShape(12.dp),
+                            color = BentoEmeraldLight.copy(alpha = 0.5f),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, BentoEmerald.copy(alpha = 0.5f)),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(10.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(imageVector = Icons.Default.CheckCircle, contentDescription = null, tint = BentoEmerald, modifier = Modifier.size(20.dp))
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "Password reset link sent to $resetEmailInput. Check your inbox!",
+                                    fontSize = 12.sp,
+                                    color = BentoEmerald,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
+                        }
+                    } else {
+                        Text(
+                            text = "Enter your email address below to receive a secure Firebase password reset link.",
+                            fontSize = 13.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+
+                        OutlinedTextField(
+                            value = resetEmailInput,
+                            onValueChange = { resetEmailInput = it },
+                            label = { Text("Email Address") },
+                            leadingIcon = {
+                                Icon(imageVector = Icons.Default.Email, contentDescription = null, tint = BentoEmerald)
+                            },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                            singleLine = true,
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                if (resetSentConfirmation) {
+                    Button(
+                        onClick = { showPasswordResetDialog = false },
+                        colors = ButtonDefaults.buttonColors(containerColor = BentoEmerald),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text("Done", fontWeight = FontWeight.Bold)
+                    }
+                } else {
+                    Button(
+                        onClick = {
+                            if (resetEmailInput.isNotBlank() && resetEmailInput.contains("@")) {
+                                onResetPassword(resetEmailInput.trim())
+                                resetSentConfirmation = true
+                            }
+                        },
+                        enabled = resetEmailInput.isNotBlank() && resetEmailInput.contains("@"),
+                        colors = ButtonDefaults.buttonColors(containerColor = BentoEmerald),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text("Send Reset Link", fontWeight = FontWeight.Bold)
+                    }
+                }
+            },
+            dismissButton = {
+                if (!resetSentConfirmation) {
+                    TextButton(onClick = { showPasswordResetDialog = false }) {
+                        Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
                 }
             }
         )

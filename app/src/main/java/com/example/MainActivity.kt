@@ -140,15 +140,19 @@ class MainActivity : ComponentActivity() {
                                 onCloseAdminDashboard = { viewModel.closeAdminDashboard() },
                                 onApproveWithdrawal = { id -> viewModel.approveWithdrawalRequest(id) },
                                 onRejectWithdrawal = { id -> viewModel.rejectWithdrawalRequest(id) },
-                                onDismissCelebration = { viewModel.dismissCelebration() }
+                                onDismissCelebration = { viewModel.dismissCelebration() },
+                                onResetPassword = { email -> viewModel.sendPasswordReset(email, context) }
                             )
                         } else {
                             LoginScreen(
                                 isLoading = uiState.isAuthLoading,
                                 errorMessage = uiState.authErrorMessage,
+                                successMessage = uiState.authSuccessMessage,
                                 onGoogleSignIn = { viewModel.signInWithGoogle(context) },
                                 onEmailSignIn = { email, pass -> viewModel.signInWithFirebase(email, pass, context) },
-                                onEmailSignUp = { email, pass, name -> viewModel.signUpWithFirebase(email, pass, name, context) }
+                                onEmailSignUp = { email, pass, name -> viewModel.signUpWithFirebase(email, pass, name, context) },
+                                onResetPassword = { email -> viewModel.sendPasswordReset(email, context) },
+                                onClearMessages = { viewModel.clearAuthMessages() }
                             )
                         }
 
@@ -205,7 +209,8 @@ fun DataCashMainApp(
     onCloseAdminDashboard: () -> Unit,
     onApproveWithdrawal: (String) -> Unit,
     onRejectWithdrawal: (String) -> Unit,
-    onDismissCelebration: () -> Unit = {}
+    onDismissCelebration: () -> Unit = {},
+    onResetPassword: (String) -> Unit = {}
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -316,7 +321,8 @@ fun DataCashMainApp(
                                 onLogout()
                                 onTabSelected(NavigationTab.HOME)
                             },
-                            onOpenAdminPin = onOpenAdminPin
+                            onOpenAdminPin = onOpenAdminPin,
+                            onResetPassword = onResetPassword
                         )
                     }
                 }
@@ -348,10 +354,12 @@ fun DataCashMainApp(
                 isSignUp = uiState.isSignUpMode,
                 isLoading = uiState.isAuthLoading,
                 errorMessage = uiState.authErrorMessage,
+                successMessage = uiState.authSuccessMessage,
                 onDismiss = onCloseAuth,
                 onTabSwitch = onAuthTabSwitch,
                 onSignIn = onSignIn,
                 onSignUp = onSignUp,
+                onResetPassword = onResetPassword,
                 onGoogleSignIn = onGoogleSignIn
             )
         }
