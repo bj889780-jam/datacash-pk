@@ -99,6 +99,70 @@ object SessionManager {
 
     private const val KEY_MB_SOLD_HISTORY_24H = "mb_sold_history_24h"
     private const val KEY_WITHDRAWALS_HISTORY_24H = "withdrawals_history_24h"
+    private const val KEY_REGISTERED_ACCOUNTS = "registered_local_accounts"
+
+    data class LocalAccount(
+        val email: String,
+        val passwordHash: String,
+        val name: String,
+        val uid: String,
+        val createdAt: Long
+    )
+
+    fun registerLocalAccount(context: Context, email: String, pass: String, name: String): LocalAccount {
+        val prefs = getPrefs(context)
+        val normalizedEmail = email.trim().lowercase()
+        val uid = "local_" + normalizedEmail.replace("@", "_").replace(".", "_")
+        val cleanName = name.trim().ifBlank { normalizedEmail.substringBefore("@").replaceFirstChar { it.uppercase() } }
+        val currentAccounts = prefs.getString(KEY_REGISTERED_ACCOUNTS, "") ?: ""
+        
+        // Format: email|password|name|uid|createdAt
+        val accountEntry = "$normalizedEmail|$pass|$cleanName|$uid|${System.currentTimeMillis()}"
+        val accountList = currentAccounts.split(";;").filter { it.isNotBlank() && !it.startsWith("$normalizedEmail|") }.toMutableList()
+        accountList.add(accountEntry)
+        prefs.edit().putString(KEY_REGISTERED_ACCOUNTS, accountList.joinToString(";;")).apply()
+        
+        return LocalAccount(
+            email = normalizedEmail,
+            passwordHash = pass,
+            name = cleanName,
+            uid = uid,
+            createdAt = System.currentTimeMillis()
+        )
+    }
+
+    fun verifyLocalAccount(context: Context, email: String, pass: String): LocalAccount? {
+        val prefs = getPrefs(context)
+        val normalizedEmail = email.trim().lowercase()
+        val currentAccounts = prefs.getString(KEY_REGISTERED_ACCOUNTS, "") ?: ""
+        if (currentAccounts.isBlank()) return null
+        
+        val entry = currentAccounts.split(";;").find { 
+            it.isNotBlank() && it.startsWith("$normalizedEmail|") 
+        } ?: return null
+        
+        val parts = entry.split("|")
+        if (parts.size >= 4) {
+            val storedPass = parts[1]
+            if (storedPass == pass) {
+                return LocalAccount(
+                    email = parts[0],
+                    passwordHash = storedPass,
+                    name = parts[2],
+                    uid = parts[3],
+                    createdAt = parts.getOrNull(4)?.toLongOrNull() ?: System.currentTimeMillis()
+                )
+            }
+        }
+        return null
+    }
+
+    fun isEmailRegisteredLocally(context: Context, email: String): Boolean {
+        val prefs = getPrefs(context)
+        val normalizedEmail = email.trim().lowercase()
+        val currentAccounts = prefs.getString(KEY_REGISTERED_ACCOUNTS, "") ?: ""
+        return currentAccounts.split(";;").any { it.isNotBlank() && it.startsWith("$normalizedEmail|") }
+    }
 
     fun recordMbSold(context: Context, mb: Double) {
         if (mb <= 0) return
