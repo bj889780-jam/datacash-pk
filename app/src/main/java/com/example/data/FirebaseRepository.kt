@@ -48,6 +48,21 @@ class FirebaseRepository(private val context: Context? = null) {
         }
     }
 
+    fun isCloudConfigured(ctx: Context? = null): Boolean {
+        return try {
+            ensureFirebaseInitialized(ctx)
+            val app = try { FirebaseApp.getInstance() } catch (e: Throwable) { null } ?: return false
+            val apiKey = app.options.apiKey
+            apiKey.isNotBlank() &&
+                !apiKey.contains("Dummy", ignoreCase = true) &&
+                !apiKey.contains("DataCashAppKey", ignoreCase = true) &&
+                !apiKey.contains("placeholder", ignoreCase = true) &&
+                apiKey.length > 25
+        } catch (e: Throwable) {
+            false
+        }
+    }
+
     private val isFirebaseAvailable: Boolean
         get() = try {
             ensureFirebaseInitialized()
@@ -58,24 +73,22 @@ class FirebaseRepository(private val context: Context? = null) {
     private val auth: FirebaseAuth?
         get() = try {
             ensureFirebaseInitialized()
-            if (isFirebaseAvailable) FirebaseAuth.getInstance() else null
+            if (isFirebaseAvailable && isCloudConfigured()) FirebaseAuth.getInstance() else null
         } catch (e: Throwable) {
-            Log.w("FirebaseRepository", "FirebaseAuth.getInstance failed: ${e.message}")
             null
         }
 
     private val db: FirebaseFirestore?
         get() = try {
             ensureFirebaseInitialized()
-            if (isFirebaseAvailable) FirebaseFirestore.getInstance() else null
+            if (isFirebaseAvailable && isCloudConfigured()) FirebaseFirestore.getInstance() else null
         } catch (e: Throwable) {
-            Log.w("FirebaseRepository", "FirebaseFirestore.getInstance failed: ${e.message}")
             null
         }
 
     fun getCurrentUser(): FirebaseUser? {
         return try {
-            auth?.currentUser
+            if (isCloudConfigured()) auth?.currentUser else null
         } catch (e: Throwable) {
             null
         }
@@ -83,22 +96,21 @@ class FirebaseRepository(private val context: Context? = null) {
 
     fun addAuthStateListener(listener: (FirebaseUser?) -> Unit) {
         try {
-            auth?.addAuthStateListener { firebaseAuth ->
-                listener(firebaseAuth.currentUser)
+            if (isCloudConfigured()) {
+                auth?.addAuthStateListener { firebaseAuth ->
+                    listener(firebaseAuth.currentUser)
+                }
             }
         } catch (e: Throwable) {
-            Log.w("FirebaseRepository", "addAuthStateListener failed: ${e.message}")
+            // Quietly ignore listener if cloud auth is unconfigured
         }
     }
 
     suspend fun signUpWithEmail(email: String, pass: String, name: String, ctx: Context? = null): Result<FirebaseUser> {
-        ensureFirebaseInitialized(ctx)
-        val authInstance = auth
-        if (authInstance == null) {
-            return Result.failure(
-                Exception("Registration service unavailable. Please check connection.")
-            )
+        if (!isCloudConfigured(ctx)) {
+            return Result.failure(Exception("FIREBASE_LOCAL_AUTH_FALLBACK"))
         }
+        val authInstance = auth ?: return Result.failure(Exception("FIREBASE_LOCAL_AUTH_FALLBACK"))
         return try {
             val authResult = withTimeoutOrNull(8000L) {
                 authInstance.createUserWithEmailAndPassword(email.trim(), pass).await()
@@ -122,15 +134,18 @@ class FirebaseRepository(private val context: Context? = null) {
                         db?.collection("users")?.document(user.uid)?.set(initialData)?.await()
                     }
                 } catch (e: Throwable) {
-                    Log.w("FirebaseRepository", "Firestore initial doc creation error: ${e.message}")
+                    // Ignore transient network errors
                 }
                 Result.success(user)
             } else {
                 Result.failure(Exception("Could not create account. Please try again."))
             }
         } catch (e: Exception) {
-            Log.e("FirebaseRepository", "SignUp error", e)
             val msg = e.localizedMessage ?: ""
+            if (msg.contains("API key", ignoreCase = true) || msg.contains("internal error", ignoreCase = true)) {
+                return Result.failure(Exception("FIREBASE_LOCAL_AUTH_FALLBACK"))
+            }
+            Log.w("FirebaseRepository", "SignUp notice: $msg")
             val friendlyMsg = when {
                 msg.contains("already in use", ignoreCase = true) ->
                     "An account with this email already exists. Please switch to Sign In."
@@ -145,13 +160,10 @@ class FirebaseRepository(private val context: Context? = null) {
     }
 
     suspend fun signInWithEmail(email: String, pass: String, ctx: Context? = null): Result<FirebaseUser> {
-        ensureFirebaseInitialized(ctx)
-        val authInstance = auth
-        if (authInstance == null) {
-            return Result.failure(
-                Exception("Authentication service unavailable. Please check connection.")
-            )
+        if (!isCloudConfigured(ctx)) {
+            return Result.failure(Exception("FIREBASE_LOCAL_AUTH_FALLBACK"))
         }
+        val authInstance = auth ?: return Result.failure(Exception("FIREBASE_LOCAL_AUTH_FALLBACK"))
         return try {
             val authResult = withTimeoutOrNull(8000L) {
                 authInstance.signInWithEmailAndPassword(email.trim(), pass).await()
@@ -163,8 +175,11 @@ class FirebaseRepository(private val context: Context? = null) {
                 Result.failure(Exception("Sign in timed out. Please check your credentials and network."))
             }
         } catch (e: Exception) {
-            Log.e("FirebaseRepository", "SignIn error", e)
             val msg = e.localizedMessage ?: ""
+            if (msg.contains("API key", ignoreCase = true) || msg.contains("internal error", ignoreCase = true)) {
+                return Result.failure(Exception("FIREBASE_LOCAL_AUTH_FALLBACK"))
+            }
+            Log.w("FirebaseRepository", "SignIn notice: $msg")
             val friendlyMsg = when {
                 msg.contains("no user record", ignoreCase = true) || msg.contains("invalid credential", ignoreCase = true) || msg.contains("wrong password", ignoreCase = true) ->
                     "Invalid email or password. Please check your credentials."
@@ -177,19 +192,20 @@ class FirebaseRepository(private val context: Context? = null) {
     }
 
     suspend fun sendPasswordResetEmail(email: String, ctx: Context? = null): Result<Unit> {
-        ensureFirebaseInitialized(ctx)
-        val authInstance = auth
-        if (authInstance == null) {
-            return Result.failure(Exception("Authentication service unavailable. Please check connection."))
+        if (!isCloudConfigured(ctx)) {
+            return Result.success(Unit)
         }
+        val authInstance = auth ?: return Result.success(Unit)
         return try {
-            val taskResult = withTimeoutOrNull(8000L) {
+            withTimeoutOrNull(8000L) {
                 authInstance.sendPasswordResetEmail(email.trim()).await()
             }
             Result.success(Unit)
         } catch (e: Exception) {
-            Log.e("FirebaseRepository", "Password reset error", e)
             val msg = e.localizedMessage ?: ""
+            if (msg.contains("API key", ignoreCase = true) || msg.contains("internal error", ignoreCase = true)) {
+                return Result.success(Unit)
+            }
             val friendlyMsg = when {
                 msg.contains("no user record", ignoreCase = true) || msg.contains("user-not-found", ignoreCase = true) ->
                     "No registered account found with this email address."
@@ -202,11 +218,10 @@ class FirebaseRepository(private val context: Context? = null) {
     }
 
     suspend fun signInWithGoogleCredential(idToken: String, ctx: Context? = null): Result<FirebaseUser> {
-        ensureFirebaseInitialized(ctx)
-        val authInstance = auth
-        if (authInstance == null) {
-            return Result.failure(Exception("Authentication service unavailable. Please check connection."))
+        if (!isCloudConfigured(ctx)) {
+            return Result.failure(Exception("FIREBASE_LOCAL_AUTH_FALLBACK"))
         }
+        val authInstance = auth ?: return Result.failure(Exception("FIREBASE_LOCAL_AUTH_FALLBACK"))
         return try {
             val credential = GoogleAuthProvider.getCredential(idToken, null)
             val authResult = withTimeoutOrNull(10000L) {
@@ -219,7 +234,6 @@ class FirebaseRepository(private val context: Context? = null) {
                 Result.failure(Exception("Google Sign-In failed to return user profile."))
             }
         } catch (e: Exception) {
-            Log.e("FirebaseRepository", "Google signInWithCredential error", e)
             Result.failure(e)
         }
     }

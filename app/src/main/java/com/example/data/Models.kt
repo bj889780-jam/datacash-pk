@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+const val APP_OWNER_EMAIL = "bj889780@gmail.com"
+
 data class UserProfile(
     val name: String = "DataCash User",
     val email: String = "user@datacash.pk",
@@ -11,6 +13,9 @@ data class UserProfile(
     val ownerTag: String = "Owner: Bilal Iqbal Jamali",
     val isVerified: Boolean = true
 ) {
+    val isOwner: Boolean
+        get() = email.trim().equals(APP_OWNER_EMAIL, ignoreCase = true)
+
     val avatarInitial: String
         get() {
             val trimmedName = name.trim()
@@ -58,8 +63,8 @@ data class WithdrawalRecord(
     val accountHolder: String,
     val accountNumber: String,
     val requestedAmount: Double,
-    val adminFee: Double = 50.0,
-    val netAmount: Double = (requestedAmount - adminFee).coerceAtLeast(0.0),
+    val adminFee: Double = if (requestedAmount > 0.0) 50.0 else 0.0,
+    val netAmount: Double = if (requestedAmount > 0.0) (requestedAmount - adminFee).coerceAtLeast(0.0) else 0.0,
     val status: WithdrawalStatus = WithdrawalStatus.PENDING_1_HR,
     val timestamp: String = SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.getDefault()).format(Date()),
     val userName: String = accountHolder,

@@ -58,6 +58,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -107,8 +108,29 @@ fun CashOutScreen(
     )
 
     val amountDouble = amountText.toDoubleOrNull() ?: 0.0
-    val adminFee = 50.0
-    val netReceiving = (amountDouble - adminFee).coerceAtLeast(0.0)
+    val adminFee = if (amountDouble > 0.0) 50.0 else 0.0
+    val netReceiving = if (amountDouble > 0.0) (amountDouble - adminFee).coerceAtLeast(0.0) else 0.0
+
+    val isMobileMethod = selectedMethod == PaymentMethod.EASYPAISA || selectedMethod == PaymentMethod.JAZZCASH
+
+    // Strict Account Holder Name validation (3-15 English letters and spaces only)
+    val trimmedHolder = accountHolder.trim()
+    val isHolderLengthValid = trimmedHolder.length in 3..15
+    val isHolderCharsValid = trimmedHolder.isNotEmpty() && trimmedHolder.all { (it in 'a'..'z') || (it in 'A'..'Z') || it == ' ' }
+    val isHolderValid = isHolderLengthValid && isHolderCharsValid
+    val isHolderError = accountHolder.isNotEmpty() && !isHolderValid
+
+    // Strict Mobile Number validation (11-digit Pakistani format 03XXXXXXXXX)
+    val cleanDigits = accountNumber.filter { it.isDigit() }
+    val isNumberValid = if (isMobileMethod) {
+        cleanDigits.length == 11 && cleanDigits.startsWith("03") && accountNumber.all { it.isDigit() }
+    } else {
+        accountNumber.trim().length >= 8
+    }
+    val isNumberError = accountNumber.isNotEmpty() && !isNumberValid
+
+    val isAmountValid = amountDouble in 200.0..3500.0 && amountDouble <= uiState.availableBalance
+    val isFormValid = isHolderValid && isNumberValid && isAmountValid
 
     LazyColumn(
         modifier = modifier
@@ -428,23 +450,91 @@ fun CashOutScreen(
 
                     OutlinedTextField(
                         value = accountHolder,
-                        onValueChange = { accountHolder = it },
+                        onValueChange = { input ->
+                            // Instantly block or strip any digits (0-9), special symbols, or non-English characters, max 15 chars
+                            val filtered = input.filter { (it in 'a'..'z') || (it in 'A'..'Z') || it == ' ' }.take(15)
+                            accountHolder = filtered
+                        },
                         label = { Text("Account Holder Name") },
-                        placeholder = { Text("Enter account title name") },
+                        placeholder = { Text("Enter account title (3-15 letters)") },
                         leadingIcon = { Icon(imageVector = Icons.Default.Person, contentDescription = null) },
-                        modifier = Modifier.fillMaxWidth(),
+                        isError = isHolderError,
+                        supportingText = {
+                            if (isHolderError) {
+                                Text(
+                                    text = "Name must be 3-15 English letters only.",
+                                    color = StopRed,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            } else if (isHolderValid) {
+                                Text(
+                                    text = "Valid title: $trimmedHolder (${trimmedHolder.length}/15)",
+                                    color = BentoEmerald,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            } else {
+                                Text(
+                                    text = "Name must be 3-15 English letters only.",
+                                    fontSize = 11.sp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                                )
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth().testTag("account_holder_input"),
                         shape = RoundedCornerShape(14.dp),
                         singleLine = true
                     )
 
                     OutlinedTextField(
                         value = accountNumber,
-                        onValueChange = { accountNumber = it },
+                        onValueChange = { input ->
+                            if (isMobileMethod) {
+                                // Strictly allow only numeric digits (0-9) and cap at 11 digits
+                                val digitsOnly = input.filter { it.isDigit() }.take(11)
+                                accountNumber = digitsOnly
+                            } else {
+                                accountNumber = input
+                            }
+                        },
                         label = { Text(if (selectedMethod == PaymentMethod.BANK_TRANSFER) "IBAN / Account Number" else "Mobile Number") },
                         placeholder = { Text(if (selectedMethod == PaymentMethod.BANK_TRANSFER) "PK00XXXX0000000000000000" else "03XXXXXXXXX") },
                         leadingIcon = { Icon(imageVector = Icons.Default.Phone, contentDescription = null) },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.fillMaxWidth(),
+                        keyboardOptions = KeyboardOptions(keyboardType = if (isMobileMethod) KeyboardType.Number else KeyboardType.Text),
+                        isError = isNumberError,
+                        supportingText = {
+                            if (isNumberError) {
+                                Text(
+                                    text = if (isMobileMethod) "Enter valid 11-digit Pakistani phone number (03XXXXXXXXX)" else "Must contain at least 8 characters",
+                                    color = StopRed,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            } else if (isMobileMethod && isNumberValid) {
+                                Text(
+                                    text = "Valid Pakistani number (${cleanDigits.length}/11)",
+                                    color = BentoEmerald,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            } else {
+                                if (isMobileMethod) {
+                                    Text(
+                                        text = "Format: 03XXXXXXXXX (11 digits)",
+                                        fontSize = 11.sp,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                                    )
+                                } else {
+                                    Text(
+                                        text = "Enter account number or IBAN (min 8 chars)",
+                                        fontSize = 11.sp,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                                    )
+                                }
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth().testTag("account_number_input"),
                         shape = RoundedCornerShape(14.dp),
                         singleLine = true
                     )
@@ -566,8 +656,13 @@ fun CashOutScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(text = "Flat Admin Fee", fontSize = 13.sp, color = StopRed)
-                        Text(text = "- PKR %.2f".format(adminFee), fontSize = 13.sp, fontWeight = FontWeight.Bold, color = StopRed)
+                        Text(text = "Flat Admin Fee", fontSize = 13.sp, color = if (adminFee > 0) StopRed else MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(
+                            text = if (adminFee > 0) "- PKR %.2f".format(adminFee) else "PKR 0.00",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = if (adminFee > 0) StopRed else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
 
                     Divider(modifier = Modifier.padding(vertical = 10.dp))
@@ -619,10 +714,11 @@ fun CashOutScreen(
             }
         }
 
-        // 6. Active Yellow "Withdraw Now" Bento Button
+        // 6. Active Yellow "Withdraw Now" Bento Button (Strictly gated by Form Validation)
         item {
             Button(
                 onClick = {
+                    if (!isFormValid) return@Button
                     val finalAccountNo = if (selectedMethod == PaymentMethod.BANK_TRANSFER) {
                         "$selectedBank - $accountNumber"
                     } else {
@@ -633,19 +729,23 @@ fun CashOutScreen(
                         amountText = ""
                     }
                 },
+                enabled = isFormValid,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = ActiveYellow,
-                    contentColor = Color.Black
+                    contentColor = Color.Black,
+                    disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
                 ),
                 shape = RoundedCornerShape(18.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(54.dp)
+                    .testTag("withdraw_now_btn")
             ) {
                 Icon(imageVector = Icons.Default.Lock, contentDescription = null, modifier = Modifier.size(20.dp))
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "WITHDRAW NOW (PKR %.2f)".format(amountDouble),
+                    text = if (isFormValid) "WITHDRAW NOW (PKR %.2f)".format(amountDouble) else "WITHDRAW NOW",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.ExtraBold,
                     letterSpacing = 0.5.sp

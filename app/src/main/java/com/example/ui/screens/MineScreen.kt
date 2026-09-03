@@ -629,64 +629,64 @@ fun MineScreen(
             }
         }
 
-        // 5. Owner Admin Dashboard Section
-        item {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
-                        shape = RoundedCornerShape(22.dp)
-                    )
-                    .testTag("admin_dashboard_card"),
-                shape = RoundedCornerShape(22.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
-                )
-            ) {
-                Column(
+        // 5. Owner Admin Dashboard Section (Strictly restricted to Authenticated App Owner 'bj889780@gmail.com')
+        if (uiState.isUserLoggedIn && uiState.userProfile.isOwner) {
+            item {
+                Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "Notice: This option is only for the app owner. Normal users do not need to access this section.",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                        lineHeight = 16.sp
+                        .border(
+                            width = 1.dp,
+                            color = BentoBlue.copy(alpha = 0.5f),
+                            shape = RoundedCornerShape(22.dp)
+                        )
+                        .testTag("admin_dashboard_card"),
+                    shape = RoundedCornerShape(22.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = BentoBlueLight.copy(alpha = 0.25f)
                     )
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    Button(
-                        onClick = onOpenAdminPin,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = BentoBlue,
-                            contentColor = Color.White
-                        ),
-                        shape = RoundedCornerShape(16.dp),
+                ) {
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(50.dp)
-                            .testTag("admin_dashboard_btn")
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.AdminPanelSettings,
-                            contentDescription = "Admin Dashboard",
-                            modifier = Modifier.size(20.dp),
-                            tint = Color.White
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "ADMIN DASHBOARD (OWNER ONLY)",
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Black,
-                            letterSpacing = 0.5.sp
+                            text = "Authenticated App Owner Control",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = BentoBlue
                         )
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        Button(
+                            onClick = onOpenAdminPin,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = BentoBlue,
+                                contentColor = Color.White
+                            ),
+                            shape = RoundedCornerShape(16.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(50.dp)
+                                .testTag("admin_dashboard_btn")
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.AdminPanelSettings,
+                                contentDescription = "Admin Dashboard",
+                                modifier = Modifier.size(20.dp),
+                                tint = Color.White
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "ADMIN DASHBOARD (OWNER ONLY)",
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Black,
+                                letterSpacing = 0.5.sp
+                            )
+                        }
                     }
                 }
             }

@@ -101,25 +101,19 @@ fun AdminPinDialog(
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
-                    text = "App Owner Admin Security",
-                    fontSize = 18.sp,
+                    text = "Owner Security Check",
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Black,
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
+                Spacer(modifier = Modifier.height(4.dp))
+
                 Text(
-                    text = "Owner: Bilal Iqbal Jamali",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
+                    text = "Verifying credentials for Bilal Iqbal Jamali",
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.SemiBold,
                     color = BentoEmerald
-                )
-
-                Spacer(modifier = Modifier.height(6.dp))
-
-                Text(
-                    text = "Enter Admin Security Code to unlock Admin Panel",
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 Spacer(modifier = Modifier.height(14.dp))
@@ -158,8 +152,9 @@ fun AdminPinDialog(
                 // Security Code Input
                 OutlinedTextField(
                     value = pinInput,
-                    onValueChange = { if (it.length <= 15) pinInput = it },
-                    label = { Text("Admin Security Code") },
+                    onValueChange = { if (it.length <= 20) pinInput = it },
+                    label = { Text("Enter Master PIN") },
+                    placeholder = { Text("Enter Master PIN") },
                     leadingIcon = {
                         Icon(imageVector = Icons.Default.Lock, contentDescription = null)
                     },
@@ -188,7 +183,7 @@ fun AdminPinDialog(
                     enabled = pinInput.isNotBlank(),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(48.dp)
+                        .height(50.dp)
                         .testTag("admin_pin_submit_btn"),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = BentoEmerald,
@@ -197,7 +192,7 @@ fun AdminPinDialog(
                     shape = RoundedCornerShape(14.dp)
                 ) {
                     Text(
-                        text = "Unlock Admin Dashboard",
+                        text = "Verify & Open Dashboard",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold
                     )

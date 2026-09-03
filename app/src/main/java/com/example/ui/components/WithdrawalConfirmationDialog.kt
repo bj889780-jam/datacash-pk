@@ -86,18 +86,29 @@ fun WithdrawalConfirmationDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // Header with icon and close button
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    IconButton(
+                        onClick = onDismiss,
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .size(36.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Close",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 4.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Box(
                             modifier = Modifier
-                                .size(40.dp)
+                                .size(48.dp)
                                 .clip(CircleShape)
                                 .background(BentoEmerald.copy(alpha = 0.12f)),
                             contentAlignment = Alignment.Center
@@ -106,38 +117,30 @@ fun WithdrawalConfirmationDialog(
                                 imageVector = Icons.Default.Security,
                                 contentDescription = null,
                                 tint = BentoEmerald,
-                                modifier = Modifier.size(22.dp)
+                                modifier = Modifier.size(26.dp)
                             )
                         }
 
-                        Column {
-                            Text(
-                                text = "Confirm Cash-Out",
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                            Text(
-                                text = "Review transaction details",
-                                fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
+                        Spacer(modifier = Modifier.height(10.dp))
 
-                    IconButton(
-                        onClick = onDismiss,
-                        modifier = Modifier.size(32.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Close",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        Text(
+                            text = "Confirm Cash-Out",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = "Review and confirm your transaction details",
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(18.dp))
 
                 // Payment Destination Card
                 Surface(
@@ -240,12 +243,13 @@ fun WithdrawalConfirmationDialog(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(14.dp),
+                            .padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
                                 text = "Requested Amount",
@@ -254,7 +258,7 @@ fun WithdrawalConfirmationDialog(
                             )
                             Text(
                                 text = "PKR %.2f".format(record.requestedAmount),
-                                fontSize = 13.sp,
+                                fontSize = 14.sp,
                                 fontWeight = FontWeight.SemiBold,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
@@ -262,18 +266,19 @@ fun WithdrawalConfirmationDialog(
 
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Processing Fee (Flat)",
+                                text = "Flat Admin Fee",
                                 fontSize = 13.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Text(
-                                text = "- PKR %.2f".format(record.adminFee),
+                                text = if (record.adminFee > 0) "- PKR %.2f".format(record.adminFee) else "PKR 0.00",
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = Color(0xFFE11D48)
+                                color = if (record.adminFee > 0) Color(0xFFE11D48) else MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
 
@@ -295,8 +300,8 @@ fun WithdrawalConfirmationDialog(
                             )
                             Text(
                                 text = "PKR %.2f".format(record.netAmount),
-                                fontSize = 17.sp,
-                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Black,
                                 color = BentoEmerald
                             )
                         }
@@ -314,7 +319,8 @@ fun WithdrawalConfirmationDialog(
                             shape = RoundedCornerShape(12.dp)
                         )
                         .padding(horizontal = 12.dp, vertical = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
                 ) {
                     Icon(
                         imageVector = Icons.Default.AccessTime,
@@ -327,43 +333,48 @@ fun WithdrawalConfirmationDialog(
                         text = "Funds will be transferred to your account within 1 hour.",
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
+                        textAlign = TextAlign.Center
                     )
                 }
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // Action Buttons: Cancel and Confirm Withdraw
+                // Action Buttons: Cancel and Confirm Withdraw (strictly single horizontal line)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     OutlinedButton(
                         onClick = onDismiss,
                         modifier = Modifier
                             .weight(1f)
-                            .height(48.dp),
-                        shape = RoundedCornerShape(14.dp),
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.6f))
+                            .height(52.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        border = BorderStroke(1.2.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.6f))
                     ) {
                         Text(
                             text = "Cancel",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = MaterialTheme.colorScheme.onSurface,
+                            maxLines = 1,
+                            softWrap = false
                         )
                     }
 
                     Button(
                         onClick = onConfirm,
                         modifier = Modifier
-                            .weight(1.3f)
-                            .height(48.dp),
-                        shape = RoundedCornerShape(14.dp),
+                            .weight(1.5f)
+                            .height(52.dp),
+                        shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = BentoEmerald,
                             contentColor = Color.White
-                        )
+                        ),
+                        contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 8.dp, vertical = 0.dp)
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -378,7 +389,9 @@ fun WithdrawalConfirmationDialog(
                             Text(
                                 text = "Confirm Withdraw",
                                 fontSize = 13.sp,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 1,
+                                softWrap = false
                             )
                         }
                     }

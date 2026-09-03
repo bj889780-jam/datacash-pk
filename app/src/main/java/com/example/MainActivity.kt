@@ -381,8 +381,8 @@ fun DataCashMainApp(
             )
         }
 
-        // Dialog alert for user notice if active (when not showing confirmation dialog)
-        if (uiState.pendingWithdrawalRecord == null) {
+        // Dialog alert for user notice if active (when not showing confirmation or celebration)
+        if (uiState.pendingWithdrawalRecord == null && !uiState.isCelebrationActive) {
             uiState.userNoticeMessage?.let { notice ->
                 AlertDialog(
                     onDismissRequest = onClearNotice,

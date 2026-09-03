@@ -326,54 +326,48 @@ class DataCashViewModel(application: Application) : AndroidViewModel(application
             val trimmedPass = pass.trim()
             _uiState.update { it.copy(isAuthLoading = true, authErrorMessage = null) }
             try {
-                val result = firebaseRepository.signInWithEmail(trimmedEmail, trimmedPass, context ?: appCtx)
-                if (result.isSuccess) {
-                    val user = result.getOrNull()
-                    val displayName = user?.displayName ?: trimmedEmail.substringBefore("@").replaceFirstChar { char -> char.uppercase() }
-                    val userEmail = user?.email ?: trimmedEmail
-                    val photo = user?.photoUrl?.toString()
-                    val uid = user?.uid ?: "user_${trimmedEmail.replace("@", "_").replace(".", "_")}"
+                // Check if valid local account exists
+                val localAcc = SessionManager.verifyLocalAccount(appCtx, trimmedEmail, trimmedPass)
+                if (localAcc != null) {
+                    completeSuccessfulSignIn(localAcc.uid, localAcc.name, localAcc.email, null)
+                    return@launch
+                }
 
-                    completeSuccessfulSignIn(uid, displayName, userEmail, photo)
-                    loadUserDataFromFirestore(uid)
-                } else {
-                    val errorMsg = result.exceptionOrNull()?.localizedMessage ?: ""
-                    // If error is caused by invalid Firebase API key or configuration, authenticate with local secure account store
-                    if (errorMsg.contains("API key", ignoreCase = true) ||
-                        errorMsg.contains("internal error", ignoreCase = true) ||
-                        errorMsg.contains("configuration", ignoreCase = true) ||
-                        errorMsg.contains("service unavailable", ignoreCase = true)
-                    ) {
-                        val localAcc = SessionManager.verifyLocalAccount(appCtx, trimmedEmail, trimmedPass)
-                        if (localAcc != null) {
-                            completeSuccessfulSignIn(localAcc.uid, localAcc.name, localAcc.email, null)
-                        } else {
-                            // Register locally and authenticate seamlessly
-                            val registered = SessionManager.registerLocalAccount(
-                                appCtx,
-                                trimmedEmail,
-                                trimmedPass,
-                                trimmedEmail.substringBefore("@").replaceFirstChar { it.uppercase() }
-                            )
-                            completeSuccessfulSignIn(registered.uid, registered.name, registered.email, null)
-                        }
-                    } else {
-                        // Check if valid local account exists
-                        val localAcc = SessionManager.verifyLocalAccount(appCtx, trimmedEmail, trimmedPass)
-                        if (localAcc != null) {
-                            completeSuccessfulSignIn(localAcc.uid, localAcc.name, localAcc.email, null)
-                        } else {
-                            _uiState.update {
-                                it.copy(
-                                    isAuthLoading = false,
-                                    authErrorMessage = errorMsg.ifBlank { "Sign in failed. Please check your credentials." }
-                                )
-                            }
-                        }
+                if (firebaseRepository.isCloudConfigured(context ?: appCtx)) {
+                    val result = firebaseRepository.signInWithEmail(trimmedEmail, trimmedPass, context ?: appCtx)
+                    if (result.isSuccess) {
+                        val user = result.getOrNull()
+                        val displayName = user?.displayName ?: trimmedEmail.substringBefore("@").replaceFirstChar { char -> char.uppercase() }
+                        val userEmail = user?.email ?: trimmedEmail
+                        val photo = user?.photoUrl?.toString()
+                        val uid = user?.uid ?: "user_${trimmedEmail.replace("@", "_").replace(".", "_")}"
+
+                        completeSuccessfulSignIn(uid, displayName, userEmail, photo)
+                        loadUserDataFromFirestore(uid)
+                        return@launch
                     }
                 }
+
+                // If account was already registered locally with a different password
+                if (SessionManager.isEmailRegisteredLocally(appCtx, trimmedEmail)) {
+                    _uiState.update {
+                        it.copy(
+                            isAuthLoading = false,
+                            authErrorMessage = "Invalid password. Please check your credentials or reset password."
+                        )
+                    }
+                } else {
+                    // Register locally and authenticate seamlessly
+                    val registered = SessionManager.registerLocalAccount(
+                        appCtx,
+                        trimmedEmail,
+                        trimmedPass,
+                        trimmedEmail.substringBefore("@").replaceFirstChar { it.uppercase() }
+                    )
+                    completeSuccessfulSignIn(registered.uid, registered.name, registered.email, null)
+                }
             } catch (e: Throwable) {
-                // Fallback to local account check
+                // Seamless local account fallback
                 val localAcc = SessionManager.verifyLocalAccount(appCtx, trimmedEmail, trimmedPass)
                 if (localAcc != null) {
                     completeSuccessfulSignIn(localAcc.uid, localAcc.name, localAcc.email, null)
@@ -398,36 +392,24 @@ class DataCashViewModel(application: Application) : AndroidViewModel(application
             val cleanName = name.trim().ifBlank { trimmedEmail.substringBefore("@").replaceFirstChar { it.uppercase() } }
             _uiState.update { it.copy(isAuthLoading = true, authErrorMessage = null) }
             try {
-                val result = firebaseRepository.signUpWithEmail(trimmedEmail, trimmedPass, cleanName, context ?: appCtx)
-                if (result.isSuccess) {
-                    val user = result.getOrNull()
-                    val displayName = cleanName
-                    val userEmail = user?.email ?: trimmedEmail
-                    val photo = user?.photoUrl?.toString()
-                    val uid = user?.uid ?: "user_${trimmedEmail.replace("@", "_").replace(".", "_")}"
+                if (firebaseRepository.isCloudConfigured(context ?: appCtx)) {
+                    val result = firebaseRepository.signUpWithEmail(trimmedEmail, trimmedPass, cleanName, context ?: appCtx)
+                    if (result.isSuccess) {
+                        val user = result.getOrNull()
+                        val displayName = cleanName
+                        val userEmail = user?.email ?: trimmedEmail
+                        val photo = user?.photoUrl?.toString()
+                        val uid = user?.uid ?: "user_${trimmedEmail.replace("@", "_").replace(".", "_")}"
 
-                    SessionManager.registerLocalAccount(appCtx, trimmedEmail, trimmedPass, cleanName)
-                    completeSuccessfulSignIn(uid, displayName, userEmail, photo)
-                    syncUserDataToFirestore()
-                } else {
-                    val errorMsg = result.exceptionOrNull()?.localizedMessage ?: ""
-                    // If error is Firebase API key or configuration error, register and authenticate locally
-                    if (errorMsg.contains("API key", ignoreCase = true) ||
-                        errorMsg.contains("internal error", ignoreCase = true) ||
-                        errorMsg.contains("configuration", ignoreCase = true) ||
-                        errorMsg.contains("service unavailable", ignoreCase = true)
-                    ) {
-                        val registered = SessionManager.registerLocalAccount(appCtx, trimmedEmail, trimmedPass, cleanName)
-                        completeSuccessfulSignIn(registered.uid, registered.name, registered.email, null)
-                    } else {
-                        _uiState.update {
-                            it.copy(
-                                isAuthLoading = false,
-                                authErrorMessage = errorMsg.ifBlank { "Sign up failed. Please try again." }
-                            )
-                        }
+                        SessionManager.registerLocalAccount(appCtx, trimmedEmail, trimmedPass, cleanName)
+                        completeSuccessfulSignIn(uid, displayName, userEmail, photo)
+                        syncUserDataToFirestore()
+                        return@launch
                     }
                 }
+
+                val registered = SessionManager.registerLocalAccount(appCtx, trimmedEmail, trimmedPass, cleanName)
+                completeSuccessfulSignIn(registered.uid, registered.name, registered.email, null)
             } catch (e: Throwable) {
                 val registered = SessionManager.registerLocalAccount(appCtx, trimmedEmail, trimmedPass, cleanName)
                 completeSuccessfulSignIn(registered.uid, registered.name, registered.email, null)
@@ -913,18 +895,34 @@ class DataCashViewModel(application: Application) : AndroidViewModel(application
         val trimmedNumber = accountNumber.trim()
         val amount = amountText.trim().toDoubleOrNull()
 
+        // 1. Account Holder Name: 3-15 English letters and spaces only
+        val isHolderCharsValid = trimmedHolder.isNotEmpty() && trimmedHolder.all { (it in 'a'..'z') || (it in 'A'..'Z') || it == ' ' }
+        if (trimmedHolder.length !in 3..15 || !isHolderCharsValid) {
+            _uiState.update { it.copy(userNoticeMessage = "Name must be 3-15 English letters only.") }
+            return false
+        }
+
+        // 2. Mobile Number: 11-digit Pakistani format (03XXXXXXXXX)
+        if (paymentMethod == PaymentMethod.EASYPAISA || paymentMethod == PaymentMethod.JAZZCASH) {
+            val digitsOnly = trimmedNumber.filter { it.isDigit() }
+            if (digitsOnly.length != 11 || !digitsOnly.startsWith("03") || !trimmedNumber.all { it.isDigit() }) {
+                _uiState.update { 
+                    it.copy(userNoticeMessage = "Invalid Mobile Number! Please enter a valid 11-digit Pakistani phone number (e.g., 03XXXXXXXXX).") 
+                }
+                return false
+            }
+        } else if (paymentMethod == PaymentMethod.BANK_TRANSFER) {
+            val bankAccountOnly = if (trimmedNumber.contains(" - ")) trimmedNumber.substringAfter(" - ").trim() else trimmedNumber
+            if (bankAccountOnly.length < 8) {
+                _uiState.update { 
+                    it.copy(userNoticeMessage = "Invalid Bank Account / IBAN! Please enter at least 8 valid characters.") 
+                }
+                return false
+            }
+        }
+
         if (amount == null || amount <= 0) {
             _uiState.update { it.copy(userNoticeMessage = "Please enter a valid numeric withdrawal amount.") }
-            return false
-        }
-
-        if (trimmedHolder.isBlank()) {
-            _uiState.update { it.copy(userNoticeMessage = "Please enter Account Holder Name.") }
-            return false
-        }
-
-        if (trimmedNumber.isBlank()) {
-            _uiState.update { it.copy(userNoticeMessage = "Please enter Mobile Number or Bank IBAN / Account Number.") }
             return false
         }
 
@@ -965,7 +963,7 @@ class DataCashViewModel(application: Application) : AndroidViewModel(application
             accountHolder = trimmedHolder,
             accountNumber = trimmedNumber,
             requestedAmount = amount,
-            adminFee = 50.0,
+            adminFee = if (amount > 0) 50.0 else 0.0,
             status = WithdrawalStatus.PENDING_1_HR,
             timestamp = "Just Now"
         )
@@ -989,17 +987,18 @@ class DataCashViewModel(application: Application) : AndroidViewModel(application
         val amount = record.requestedAmount
         val appCtx = getApplication<Application>()
 
-        // 1. Immediately update and deduct in-memory state
+        // 1. Immediately update state with ONE clean confirmation dialog (no overlapping overlays)
         _uiState.update { state ->
             state.copy(
                 availableBalance = (state.availableBalance - amount).coerceAtLeast(0.0),
                 totalWithdrawn = state.totalWithdrawn + amount,
                 withdrawalHistory = listOf(record) + state.withdrawalHistory,
                 pendingWithdrawalRecord = null,
-                isCelebrationActive = true,
-                celebrationMessage = "Withdrawal Confirmed!\nPKR %.2f to %s".format(amount, record.paymentMethod.title),
-                userNoticeMessage = "Withdrawal Request Submitted Successfully!\n\n• Transaction ID: #${record.id}\n• Requested Amount: PKR %.2f\n• Flat Admin Fee: PKR 50.00\n• Net Receiving: PKR %.2f\n• Payout Channel: %s\n• Account: %s (%s)\n\nYour payout request has been registered in the system & Firestore DB. Funds will be transferred to your account within 1 hour.".format(
+                isCelebrationActive = false,
+                celebrationMessage = "",
+                userNoticeMessage = "Withdrawal Request Submitted Successfully!\n\n• Transaction ID: #${record.id}\n• Requested Amount: PKR %.2f\n• Flat Admin Fee: PKR %.2f\n• Net Receiving: PKR %.2f\n• Payout Channel: %s\n• Account: %s (%s)\n\nYour payout request has been registered in the system. Funds will be transferred to your account within 1 hour.".format(
                     amount,
+                    record.adminFee,
                     record.netAmount,
                     record.paymentMethod.title,
                     record.accountHolder,
@@ -1037,8 +1036,12 @@ class DataCashViewModel(application: Application) : AndroidViewModel(application
         _uiState.update { it.copy(userNoticeMessage = null, pendingWithdrawalRecord = null) }
     }
 
-    // Admin Dashboard Functions (Owner: Bilal Iqbal Jamali)
+    // Admin Dashboard Functions (Owner: Bilal Iqbal Jamali - bj889780@gmail.com)
     fun openAdminPinDialog() {
+        if (!_uiState.value.isUserLoggedIn || !_uiState.value.userProfile.isOwner) {
+            _uiState.update { it.copy(userNoticeMessage = "Access restricted to app owner only.") }
+            return
+        }
         _uiState.update {
             it.copy(
                 isAdminPinDialogOpen = true,
@@ -1057,6 +1060,15 @@ class DataCashViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun verifyAdminPin(enteredPin: String) {
+        if (!_uiState.value.isUserLoggedIn || !_uiState.value.userProfile.isOwner) {
+            _uiState.update {
+                it.copy(
+                    isAdminPinDialogOpen = false,
+                    adminPinError = "Access restricted to app owner only."
+                )
+            }
+            return
+        }
         if (enteredPin.trim() == "bj@#?") {
             _uiState.update {
                 it.copy(
@@ -1068,7 +1080,7 @@ class DataCashViewModel(application: Application) : AndroidViewModel(application
         } else {
             _uiState.update {
                 it.copy(
-                    adminPinError = "Incorrect Security Code. Access Denied."
+                    adminPinError = "Incorrect Master PIN. Access Denied."
                 )
             }
         }
