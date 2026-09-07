@@ -1,6 +1,6 @@
 {
   "name": "DataCash PK",
-  "description": "Fast & Secure Cash Out application with Pakistani mobile wallet & bank support.",
+  "description": "Fast & Secure Cash Out application with Pakistani mobile wallet & bank support (Easypaisa, JazzCash, Bank Transfer).",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
