@@ -1,0 +1,26 @@
+name: datacash_pk
+description: "DataCash PK - Fast & Secure Cash Out application with Pakistani mobile wallet & bank support."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    # Active, verified payment logos
+    - assets/easypaisa.png
+    - assets/jazzcash.png
+    # Optional / Future asset paths are commented out cleanly to avoid missing input file errors in Codemagic / Flutter builds:
+    # - assets/images/
+    # - assets/icons/
