@@ -1,0 +1,17 @@
+rootProject.name = "datacash_pk"
+include ':app'
+
+def localPropertiesFile = new File(rootProject.projectDir, "local.properties")
+if (localPropertiesFile.exists()) {
+    def properties = new Properties()
+    localPropertiesFile.withInputStream { instr ->
+        properties.load(instr)
+    }
+    def flutterSdkPath = properties.getProperty("flutter.sdk")
+    if (flutterSdkPath != null) {
+        def appPluginLoader = new File("$flutterSdkPath/packages/flutter_tools/gradle/app_plugin_loader.gradle")
+        if (appPluginLoader.exists()) {
+            apply from: appPluginLoader
+        }
+    }
+}
