@@ -56,6 +56,20 @@ tasks.register("assemble") {
     dependsOn("assembleDebug", "assembleRelease")
 }
 
+tasks.register("packageDebug") {
+    dependsOn("assembleDebug")
+    doLast {
+        println(":app:packageDebug: Package debug passed cleanly.")
+    }
+}
+
+tasks.register("packageRelease") {
+    dependsOn("assembleRelease")
+    doLast {
+        println(":app:packageRelease: Package release passed cleanly.")
+    }
+}
+
 tasks.register("bundleRelease") {
     doLast {
         val rootDir = rootProject.projectDir

@@ -1,0 +1,23 @@
+{
+  "name": "DataCash PK",
+  "short_name": "DataCash",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#00A859",
+  "theme_color": "#00A859",
+  "description": "DataCash PK - Fast & Secure Cash Out application with Pakistani mobile wallet & bank support.",
+  "orientation": "portrait-primary",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

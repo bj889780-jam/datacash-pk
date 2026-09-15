@@ -1,0 +1,25 @@
+# Gradle build artifacts
+.gradle/
+build/
+android/.gradle/
+android/build/
+android/app/build/
+app/build/
+
+# Logs
+*.log
+/var/log/
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+
+# Local configuration
+local.properties
+.env
+.env.local
+
+# OS files
+.DS_Store
+Thumbs.db

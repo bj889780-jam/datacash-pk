@@ -14,6 +14,14 @@ tasks.register("assemble") {
     dependsOn(":app:assemble")
 }
 
+tasks.register("packageDebug") {
+    dependsOn(":app:packageDebug")
+}
+
+tasks.register("packageRelease") {
+    dependsOn(":app:packageRelease")
+}
+
 tasks.register("bundleRelease") {
     dependsOn(":app:bundleRelease")
 }
