@@ -9,8 +9,8 @@ if (localPropertiesFile.exists()) {
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode') ?: '1'
 def flutterVersionName = localProperties.getProperty('flutter.versionName') ?: '1.0'
 
-// If Android plugin is applied, configure the android extension
-if (project.plugins.hasPlugin("com.android.application")) {
+// Configure Android application extension safely for local, Docker, and CI/CD (Codemagic)
+def configureAndroidApp = {
     android {
         namespace "com.aistudio.datacashpk.app"
         compileSdk 35
@@ -23,30 +23,64 @@ if (project.plugins.hasPlugin("com.android.application")) {
             versionName flutterVersionName
         }
 
-        signingConfigs {
-            debug {
-                // Uses standard Android debug signing automatically without external keystore files
+        // Dynamically resolve signing keystore file without failing on CI/CD
+        File validKeystoreFile = null
+        def candidatePaths = [
+            System.getenv("CM_KEYSTORE_PATH"),
+            "${projectDir}/debug.keystore",
+            "${rootDir}/debug.keystore",
+            "${rootDir}/../debug.keystore",
+            "${System.getProperty('user.home')}/.android/debug.keystore"
+        ]
+        for (def path : candidatePaths) {
+            if (path != null && !path.toString().trim().isEmpty()) {
+                File f = file(path.toString().trim())
+                if (f.exists() && f.isFile() && f.length() > 0) {
+                    validKeystoreFile = f
+                    break
+                }
             }
-            // Removed references to signingConfigData or custom keystore files:
-            // release {
-            //     signingConfig signingConfigData
-            // }
+        }
+
+        signingConfigs {
+            if (validKeystoreFile != null) {
+                ciSigning {
+                    storeFile validKeystoreFile
+                    storePassword(System.getenv("CM_KEYSTORE_PASSWORD") ?: "android")
+                    keyAlias(System.getenv("CM_KEY_ALIAS") ?: "androiddebugkey")
+                    keyPassword(System.getenv("CM_KEY_PASSWORD") ?: "android")
+                }
+            }
         }
 
         buildTypes {
             debug {
-                signingConfig signingConfigs.debug
+                // If a valid keystore exists on disk, sign with it; otherwise set null to prevent PackageApplication missing file failure
+                if (validKeystoreFile != null && signingConfigs.findByName("ciSigning") != null) {
+                    signingConfig signingConfigs.ciSigning
+                } else {
+                    signingConfig null
+                }
             }
 
             release {
-                // Set signingConfig signingConfigs.debug inside buildTypes.release block
-                // so release builds compile cleanly without missing custom keystore files
-                signingConfig signingConfigs.debug
+                if (validKeystoreFile != null && signingConfigs.findByName("ciSigning") != null) {
+                    signingConfig signingConfigs.ciSigning
+                } else {
+                    signingConfig null
+                }
                 minifyEnabled false
                 shrinkResources false
             }
         }
     }
+}
+
+if (project.plugins.hasPlugin("com.android.application")) {
+    configureAndroidApp()
+}
+project.plugins.withId("com.android.application") {
+    configureAndroidApp()
 }
 
 // Fallback & Direct Execution Tasks to ensure APK generation for Codemagic and Gradle

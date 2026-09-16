@@ -638,6 +638,214 @@
       background: var(--primary-dark);
     }
 
+    .tab-screen {
+      display: none;
+    }
+
+    .tab-screen.active {
+      display: block;
+    }
+
+    .quick-actions-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .quick-action-btn {
+      flex: 1;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 4px;
+      text-align: center;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      transition: transform 0.15s, border-color 0.2s;
+    }
+
+    .quick-action-btn:hover {
+      border-color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .quick-action-btn i {
+      font-size: 16px;
+    }
+
+    .quick-action-btn span {
+      font-size: 11px;
+      font-weight: 700;
+      color: #374151;
+    }
+
+    .chips-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .chip-btn {
+      flex: 1;
+      padding: 7px 4px;
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      color: #374151;
+    }
+
+    .chip-btn:hover {
+      background: #e5e7eb;
+    }
+
+    .fee-banner {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #166534;
+      margin-bottom: 12px;
+    }
+
+    .wallet-card-item {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .wallet-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .wallet-avatar.ep { background: #dcfce7; color: #00a859; }
+    .wallet-avatar.jc { background: #fee2e2; color: #dc2626; }
+    .wallet-avatar.bank { background: #eff6ff; color: #2563eb; }
+
+    .wallet-badge-primary {
+      background: rgba(0, 168, 89, 0.15);
+      color: var(--primary);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 12px;
+    }
+
+    .stat-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .stat-card-box {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .bar-chart-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      height: 110px;
+      padding: 10px 4px 4px;
+    }
+
+    .bar-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .bar-col .bar-fill {
+      width: 18px;
+      border-radius: 6px;
+      background: #cbd5e1;
+      transition: height 0.3s;
+    }
+
+    .bar-col.today .bar-fill {
+      background: var(--primary);
+    }
+
+    .bar-col span {
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .bar-col.today span {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .profile-box {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .profile-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .setting-group {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .setting-row {
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .setting-row:last-child {
+      border-bottom: none;
+    }
+
     .toast-msg {
       position: absolute;
       top: 70px;
@@ -680,104 +888,296 @@
 
     <!-- Scrollable Main View -->
     <main class="content-scroll">
-      <!-- Balance Card -->
-      <section class="card-hero">
-        <div class="balance-label">Available Earnings</div>
-        <div class="balance-amount">
-          <span class="curr">Rs.</span>
-          <span id="balanceText">1250.00</span>
-        </div>
-        <div class="stats-row">
-          <div class="stat-item">
-            <span class="stat-title">Bandwidth Shared</span>
-            <span class="stat-value" id="dataSharedText">4,166.7 MB</span>
+      <!-- TAB 1: HOME -->
+      <div id="tabHome" class="tab-screen active">
+        <!-- Balance Card -->
+        <section class="card-hero">
+          <div class="balance-label">Available Earnings</div>
+          <div class="balance-amount">
+            <span class="curr">Rs.</span>
+            <span id="balanceText">1250.00</span>
           </div>
-          <div class="stat-item" style="text-align: right;">
-            <span class="stat-title">Earning Rate</span>
-            <span class="stat-value" style="color: var(--primary);">Rs. 0.30 / MB</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- Sharing Toggle -->
-      <section class="switch-card" id="sharingTile" onclick="toggleSharing()">
-        <div class="switch-info">
-          <div class="switch-title">
-            <span class="pulse-dot"></span>
-            Bandwidth Sharing
-          </div>
-          <div class="switch-subtitle" id="sharingStatusText">Paused — Tap to start sharing & earning</div>
-        </div>
-        <div class="toggle-ui">
-          <div class="toggle-knob"></div>
-        </div>
-      </section>
-
-      <!-- Withdrawal Section -->
-      <div class="section-title">
-        <span>Withdraw Funds</span>
-        <span class="sub" onclick="openWithdrawModal('Instant Cashout')">Quick Payout</span>
-      </div>
-
-      <div class="methods-grid">
-        <!-- Easypaisa -->
-        <div class="method-card easypaisa-card" onclick="openWithdrawModal('Easypaisa')">
-          <div class="method-icon-wrap">
-            <img src="assets/easypaisa.png" alt="Easypaisa" onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><circle cx=\'50\' cy=\'50\' r=\'45\' fill=\'%2300B14F\'/><text x=\'50\' y=\'58\' font-size=\'32\' font-weight=\'bold\' fill=\'white\' text-anchor=\'middle\'>EP</text></svg>';">
-          </div>
-          <div class="method-name">Easypaisa</div>
-          <div class="method-desc">Instant mobile wallet</div>
-          <div class="btn-withdraw-chip">Cash Out</div>
-        </div>
-
-        <!-- JazzCash -->
-        <div class="method-card jazzcash-card" onclick="openWithdrawModal('JazzCash')">
-          <div class="method-icon-wrap">
-            <img src="assets/jazzcash.png" alt="JazzCash" onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><circle cx=\'50\' cy=\'50\' r=\'45\' fill=\'%23ED1C24\'/><text x=\'50\' y=\'58\' font-size=\'32\' font-weight=\'bold\' fill=\'white\' text-anchor=\'middle\'>JC</text></svg>';">
-          </div>
-          <div class="method-name">JazzCash</div>
-          <div class="method-desc">Instant mobile wallet</div>
-          <div class="btn-withdraw-chip">Cash Out</div>
-        </div>
-      </div>
-
-      <!-- Bank Transfer Card -->
-      <div class="bank-card" onclick="openWithdrawModal('Bank Transfer / Raast')">
-        <div class="bank-icon">
-          <i class="fa-solid fa-building-columns"></i>
-        </div>
-        <div style="flex: 1;">
-          <div style="font-size: 14px; font-weight: 700; color: var(--secondary);">1Link & Raast Instant Bank Transfer</div>
-          <div style="font-size: 11px; color: var(--text-muted);">Meezan, HBL, UBL, Bank Alfalah & all Pak Banks</div>
-        </div>
-        <i class="fa-solid fa-chevron-right" style="color: #9ca3af; font-size: 12px;"></i>
-      </div>
-
-      <!-- Recent Transactions -->
-      <div class="section-title">
-        <span>Recent Activity</span>
-      </div>
-
-      <div class="activity-card" id="activityList">
-        <div class="activity-item">
-          <div class="activity-left">
-            <div class="activity-badge ep"><i class="fa-solid fa-arrow-down"></i></div>
-            <div class="activity-text">
-              <div class="title">Easypaisa Cash Out</div>
-              <div class="date">Today, 02:45 PM • Completed</div>
+          <div class="stats-row">
+            <div class="stat-item">
+              <span class="stat-title">Bandwidth Shared</span>
+              <span class="stat-value" id="dataSharedText">4,166.7 MB</span>
+            </div>
+            <div class="stat-item" style="text-align: right;">
+              <span class="stat-title">Earning Rate</span>
+              <span class="stat-value" style="color: var(--primary);">Rs. 0.30 / MB</span>
             </div>
           </div>
-          <div class="activity-amount negative">- Rs. 500.00</div>
+        </section>
+
+        <!-- Sharing Toggle -->
+        <section class="switch-card" id="sharingTile" onclick="toggleSharing()">
+          <div class="switch-info">
+            <div class="switch-title">
+              <span class="pulse-dot"></span>
+              Bandwidth Sharing
+            </div>
+            <div class="switch-subtitle" id="sharingStatusText">Paused — Tap to start sharing & earning</div>
+          </div>
+          <div class="toggle-ui">
+            <div class="toggle-knob"></div>
+          </div>
+        </section>
+
+        <!-- Quick Actions Row -->
+        <div class="quick-actions-row">
+          <div class="quick-action-btn" onclick="openWithdrawModal('Easypaisa')">
+            <i class="fa-solid fa-money-bill-transfer" style="color: #00a859;"></i>
+            <span>Cash Out</span>
+          </div>
+          <div class="quick-action-btn" onclick="openAddWalletModal()">
+            <i class="fa-solid fa-plus" style="color: #2563eb;"></i>
+            <span>Add Wallet</span>
+          </div>
+          <div class="quick-action-btn" onclick="switchNavByName('Account')">
+            <i class="fa-solid fa-gift" style="color: #7c3aed;"></i>
+            <span>Invite</span>
+          </div>
+          <div class="quick-action-btn" onclick="switchNavByName('Yield')">
+            <i class="fa-solid fa-chart-line" style="color: #ea580c;"></i>
+            <span>Yield</span>
+          </div>
         </div>
-        <div class="activity-item">
-          <div class="activity-left">
-            <div class="activity-badge data"><i class="fa-solid fa-network-wired"></i></div>
-            <div class="activity-text">
-              <div class="title">Data Yield (1,500 MB)</div>
-              <div class="date">Yesterday • Verified</div>
+
+        <!-- Withdrawal Section -->
+        <div class="section-title">
+          <span>Instant Cash Out</span>
+          <span class="sub" onclick="openWithdrawModal('Instant Cashout')">Quick Payout</span>
+        </div>
+
+        <div class="methods-grid">
+          <!-- Easypaisa -->
+          <div class="method-card easypaisa-card" onclick="openWithdrawModal('Easypaisa')">
+            <div class="method-icon-wrap">
+              <img src="assets/easypaisa.png" alt="Easypaisa" onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><circle cx=\'50\' cy=\'50\' r=\'45\' fill=\'%2300B14F\'/><text x=\'50\' y=\'58\' font-size=\'32\' font-weight=\'bold\' fill=\'white\' text-anchor=\'middle\'>EP</text></svg>';">
+            </div>
+            <div class="method-name">Easypaisa</div>
+            <div class="method-desc">Instant mobile wallet</div>
+            <div class="btn-withdraw-chip">Cash Out</div>
+          </div>
+
+          <!-- JazzCash -->
+          <div class="method-card jazzcash-card" onclick="openWithdrawModal('JazzCash')">
+            <div class="method-icon-wrap">
+              <img src="assets/jazzcash.png" alt="JazzCash" onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><circle cx=\'50\' cy=\'50\' r=\'45\' fill=\'%23ED1C24\'/><text x=\'50\' y=\'58\' font-size=\'32\' font-weight=\'bold\' fill=\'white\' text-anchor=\'middle\'>JC</text></svg>';">
+            </div>
+            <div class="method-name">JazzCash</div>
+            <div class="method-desc">Instant mobile wallet</div>
+            <div class="btn-withdraw-chip">Cash Out</div>
+          </div>
+        </div>
+
+        <!-- Bank Transfer Card -->
+        <div class="bank-card" onclick="openWithdrawModal('1Link Bank Transfer / Raast')">
+          <div class="bank-icon">
+            <i class="fa-solid fa-building-columns"></i>
+          </div>
+          <div style="flex: 1;">
+            <div style="font-size: 14px; font-weight: 700; color: var(--secondary);">1Link & Raast Instant Bank Transfer</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Meezan, HBL, UBL, Bank Alfalah & all Pak Banks</div>
+          </div>
+          <i class="fa-solid fa-chevron-right" style="color: #9ca3af; font-size: 12px;"></i>
+        </div>
+
+        <!-- Recent Transactions -->
+        <div class="section-title">
+          <span>Recent Activity</span>
+        </div>
+
+        <div class="activity-card" id="activityList">
+          <div class="activity-item">
+            <div class="activity-left">
+              <div class="activity-badge ep"><i class="fa-solid fa-arrow-down"></i></div>
+              <div class="activity-text">
+                <div class="title">Easypaisa Cash Out</div>
+                <div class="date">Today, 02:45 PM • Completed</div>
+              </div>
+            </div>
+            <div class="activity-amount negative">- Rs. 500.00</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-left">
+              <div class="activity-badge data"><i class="fa-solid fa-network-wired"></i></div>
+              <div class="activity-text">
+                <div class="title">Data Yield (1,500 MB)</div>
+                <div class="date">Yesterday • Verified</div>
+              </div>
+            </div>
+            <div class="activity-amount positive">+ Rs. 450.00</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-left">
+              <div class="activity-badge data" style="background:#ede9fe; color:#7c3aed;"><i class="fa-solid fa-gift"></i></div>
+              <div class="activity-text">
+                <div class="title">Referral Reward (Invite)</div>
+                <div class="date">14 Sep 2026 • Verified</div>
+              </div>
+            </div>
+            <div class="activity-amount positive">+ Rs. 150.00</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: WALLETS -->
+      <div id="tabWallets" class="tab-screen">
+        <div class="section-title" style="margin-top: 4px;">
+          <span>Linked Payout Accounts</span>
+          <span class="sub" onclick="openAddWalletModal()">+ Link New</span>
+        </div>
+        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">
+          Instant automated withdrawals via State Bank of Pakistan 1Link & Raast gateways.
+        </div>
+
+        <div id="walletsList">
+          <div class="wallet-card-item">
+            <div class="wallet-avatar ep"><i class="fa-solid fa-wallet"></i></div>
+            <div style="flex: 1;">
+              <div style="font-weight: 700; font-size: 14px; color: #1f2937;">Easypaisa Mobile Account</div>
+              <div style="font-size: 12px; color: #6b7280;">Muhammad Ali</div>
+              <div style="font-size: 13px; font-weight: 600; color: #111827; margin-top: 2px;">0300-***4567</div>
+            </div>
+            <span class="wallet-badge-primary">Primary</span>
+          </div>
+
+          <div class="wallet-card-item">
+            <div class="wallet-avatar jc"><i class="fa-solid fa-wallet"></i></div>
+            <div style="flex: 1;">
+              <div style="font-weight: 700; font-size: 14px; color: #1f2937;">JazzCash Mobile Account</div>
+              <div style="font-size: 12px; color: #6b7280;">Muhammad Ali</div>
+              <div style="font-size: 13px; font-weight: 600; color: #111827; margin-top: 2px;">0321-***7890</div>
+            </div>
+            <button onclick="showToast('Set JazzCash as Primary')" style="border:none; background:none; color:var(--primary); font-size:12px; font-weight:600; cursor:pointer;">Set Primary</button>
+          </div>
+
+          <div class="wallet-card-item">
+            <div class="wallet-avatar bank"><i class="fa-solid fa-building-columns"></i></div>
+            <div style="flex: 1;">
+              <div style="font-weight: 700; font-size: 14px; color: #1f2937;">Meezan Bank (Raast ID)</div>
+              <div style="font-size: 12px; color: #6b7280;">PK36MEZN000123456789</div>
+              <div style="font-size: 13px; font-weight: 600; color: #111827; margin-top: 2px;">Raast: 03001234567</div>
+            </div>
+            <button onclick="showToast('Set Meezan Raast as Primary')" style="border:none; background:none; color:var(--primary); font-size:12px; font-weight:600; cursor:pointer;">Set Primary</button>
+          </div>
+        </div>
+
+        <button class="submit-btn" onclick="openAddWalletModal()" style="margin-top: 10px;">
+          <i class="fa-solid fa-plus"></i> Link Another Account
+        </button>
+      </div>
+
+      <!-- TAB 3: YIELD -->
+      <div id="tabYield" class="tab-screen">
+        <div class="section-title" style="margin-top: 4px;">
+          <span>Bandwidth Yield Analytics</span>
+        </div>
+        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">
+          Monitor real-time network utilization, payout rate, and Pakistani edge nodes.
+        </div>
+
+        <div class="stat-grid-2">
+          <div class="stat-card-box">
+            <div style="font-size: 12px; color: #6b7280;">Today's Yield</div>
+            <div style="font-size: 22px; font-weight: 800; color: var(--primary); margin: 4px 0;">Rs. 184.20</div>
+            <div style="font-size: 11px; color: #6b7280;">614.0 MB Uploaded</div>
+          </div>
+          <div class="stat-card-box">
+            <div style="font-size: 12px; color: #6b7280;">Avg. Hourly Rate</div>
+            <div style="font-size: 22px; font-weight: 800; color: #2563eb; margin: 4px 0;">Rs. 18.00 / hr</div>
+            <div style="font-size: 11px; color: #6b7280;">99.8% Connectivity</div>
+          </div>
+        </div>
+
+        <!-- Node Status Card -->
+        <div class="setting-group" style="padding: 16px;">
+          <div style="font-weight: 700; font-size: 14px; margin-bottom: 12px;">Connected Pakistan Edge Node</div>
+          <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px;">
+            <span style="color: #6b7280;">Node Region:</span>
+            <span style="font-weight: 600;">Karachi, PK (Node PK-01)</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px;">
+            <span style="color: #6b7280;">Detected ISP:</span>
+            <span style="font-weight: 600;">Nayatel / PTCL Fiber</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 13px;">
+            <span style="color: #6b7280;">Network Latency:</span>
+            <span style="font-weight: 700; color: var(--primary);">14 ms (Optimal)</span>
+          </div>
+        </div>
+
+        <!-- 7 Days Bar Visualizer -->
+        <div class="setting-group" style="padding: 16px;">
+          <div style="font-weight: 700; font-size: 14px; margin-bottom: 12px;">Weekly Earnings (PKR)</div>
+          <div class="bar-chart-row">
+            <div class="bar-col"><div class="bar-fill" style="height: 40px;"></div><span>Mon</span></div>
+            <div class="bar-col"><div class="bar-fill" style="height: 65px;"></div><span>Tue</span></div>
+            <div class="bar-col"><div class="bar-fill" style="height: 50px;"></div><span>Wed</span></div>
+            <div class="bar-col"><div class="bar-fill" style="height: 75px;"></div><span>Thu</span></div>
+            <div class="bar-col"><div class="bar-fill" style="height: 90px;"></div><span>Fri</span></div>
+            <div class="bar-col"><div class="bar-fill" style="height: 70px;"></div><span>Sat</span></div>
+            <div class="bar-col today"><div class="bar-fill" style="height: 85px;"></div><span>Sun</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: ACCOUNT -->
+      <div id="tabAccount" class="tab-screen">
+        <!-- Profile info -->
+        <div class="profile-box">
+          <div class="profile-avatar">BJ</div>
+          <div>
+            <div style="font-weight: 700; font-size: 16px; color: #111827;">bj889780@gmail.com</div>
+            <div style="display: flex; align-items: center; gap: 4px; color: var(--primary); font-size: 12px; font-weight: 600; margin-top: 4px;">
+              <i class="fa-solid fa-circle-check"></i> Level 2 Verified (CNIC & Mobile)
             </div>
           </div>
-          <div class="activity-amount positive">+ Rs. 450.00</div>
+        </div>
+
+        <!-- Referral Card -->
+        <div class="setting-group" style="padding: 16px; margin-bottom: 16px;">
+          <div style="font-weight: 700; font-size: 14px; margin-bottom: 4px;">Invite & Earn Program</div>
+          <div style="font-size: 12px; color: #6b7280; margin-bottom: 12px;">
+            Get Rs. 150 immediate cash bonus + 10% lifetime bandwidth bonus for each friend who joins.
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 10px; padding: 10px 14px;">
+            <span style="font-weight: 700; letter-spacing: 1px; color: #111827;">DATAPAK786</span>
+            <button onclick="copyReferralCode()" style="background: var(--primary); color: white; border: none; border-radius: 6px; padding: 6px 12px; font-size: 12px; font-weight: 700; cursor: pointer;">Copy Code</button>
+          </div>
+        </div>
+
+        <!-- Settings List -->
+        <div class="setting-group">
+          <div class="setting-row">
+            <div>
+              <div style="font-size: 14px; font-weight: 600; color: #1f2937;">Biometric Lock</div>
+              <div style="font-size: 11px; color: #6b7280;">Require fingerprint for cash out</div>
+            </div>
+            <input type="checkbox" checked style="accent-color: var(--primary); width: 18px; height: 18px;">
+          </div>
+          <div class="setting-row">
+            <div>
+              <div style="font-size: 14px; font-weight: 600; color: #1f2937;">Auto Cash-Out Threshold</div>
+              <div style="font-size: 11px; color: #6b7280;">Auto transfer to Easypaisa at Rs. 2,000</div>
+            </div>
+            <input type="checkbox" style="accent-color: var(--primary); width: 18px; height: 18px;">
+          </div>
+          <div class="setting-row" onclick="showToast('Support helpline: +92 300 0000000 (24/7 PKT)')" style="cursor: pointer;">
+            <div>
+              <div style="font-size: 14px; font-weight: 600; color: #1f2937;">Pakistan WhatsApp Helpline</div>
+              <div style="font-size: 11px; color: #6b7280;">24/7 Live Agent Support (English & Urdu)</div>
+            </div>
+            <i class="fa-solid fa-chevron-right" style="color: #9ca3af; font-size: 12px;"></i>
+          </div>
+          <div class="setting-row">
+            <div>
+              <div style="font-size: 14px; font-weight: 600; color: #1f2937;">App Version</div>
+              <div style="font-size: 11px; color: #6b7280;">Build 1.0.0+1 (Stable Release)</div>
+            </div>
+            <span style="font-size: 12px; font-weight: 600; color: #9ca3af;">v1.0.0</span>
+          </div>
         </div>
       </div>
     </main>
@@ -809,8 +1209,15 @@
           <div class="modal-title" id="modalMethodTitle">Withdraw via Easypaisa</div>
           <button class="modal-close" onclick="closeWithdrawModal()"><i class="fa-solid fa-xmark"></i></button>
         </div>
+
+        <div class="chips-row" style="margin-bottom: 12px;">
+          <button class="chip-btn" onclick="selectWithdrawMethod('Easypaisa')">Easypaisa</button>
+          <button class="chip-btn" onclick="selectWithdrawMethod('JazzCash')">JazzCash</button>
+          <button class="chip-btn" onclick="selectWithdrawMethod('1Link Bank / Raast')">Raast / Bank</button>
+        </div>
+
         <div class="form-group">
-          <label class="form-label">Account / Mobile Number (03xxxxxxxxx)</label>
+          <label class="form-label" id="withdrawAccountLabel">Account / Mobile Number (03xxxxxxxxx)</label>
           <input type="tel" class="form-input" id="withdrawPhone" placeholder="03001234567" value="03001234567">
         </div>
         <div class="form-group">
@@ -821,7 +1228,51 @@
           <label class="form-label">Amount (PKR)</label>
           <input type="number" class="form-input" id="withdrawAmount" placeholder="500" value="500">
         </div>
+
+        <div class="chips-row">
+          <button class="chip-btn" onclick="setWithdrawAmount(500)">Rs. 500</button>
+          <button class="chip-btn" onclick="setWithdrawAmount(1000)">Rs. 1,000</button>
+          <button class="chip-btn" onclick="setWithdrawAmount(2000)">Rs. 2,000</button>
+          <button class="chip-btn" onclick="setWithdrawMax()">All</button>
+        </div>
+
+        <div class="fee-banner">
+          <i class="fa-solid fa-circle-check" style="color: var(--primary);"></i>
+          <span>Fee: Rs. 0.00 • Instant payout via State Bank 1Link Network</span>
+        </div>
+
         <button class="submit-btn" onclick="executeCashOut()">Confirm Cash Out</button>
+      </div>
+    </div>
+
+    <!-- Add Wallet Modal -->
+    <div class="modal-backdrop" id="addWalletModal">
+      <div class="modal-sheet">
+        <div class="modal-header">
+          <div class="modal-title">Link New Account</div>
+          <button class="modal-close" onclick="closeAddWalletModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Account Type</label>
+          <select class="form-input" id="newWalletType">
+            <option value="Easypaisa">Easypaisa Mobile Account</option>
+            <option value="JazzCash">JazzCash Wallet</option>
+            <option value="Raast">Raast ID / 1Link Bank</option>
+            <option value="Meezan Bank">Meezan Bank</option>
+            <option value="HBL">Habib Bank Limited (HBL)</option>
+            <option value="SadaPay">SadaPay</option>
+            <option value="NayaPay">NayaPay</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Account Title / Full Name</label>
+          <input type="text" class="form-input" id="newWalletTitle" placeholder="e.g. Muhammad Ali">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Account / Mobile / IBAN Number</label>
+          <input type="text" class="form-input" id="newWalletNumber" placeholder="03001234567 or IBAN">
+        </div>
+        <button class="submit-btn" onclick="saveNewWallet()">Save Account</button>
       </div>
     </div>
 
@@ -862,8 +1313,8 @@
         statusText.innerText = 'Active — Earning PKR 0.30 per MB in background';
         showToast('Data Sharing Activated!');
         shareInterval = setInterval(() => {
-          dataSharedMb += 1.2;
-          balance += 0.36;
+          dataSharedMb += 1.4;
+          balance += 0.42;
           document.getElementById('balanceText').innerText = formatNumber(balance);
           document.getElementById('dataSharedText').innerText = formatNumber(dataSharedMb) + ' MB';
         }, 1200);
@@ -875,14 +1326,31 @@
       }
     }
 
-    function openWithdrawModal(method) {
+    function selectWithdrawMethod(method) {
       currentMethod = method;
       document.getElementById('modalMethodTitle').innerText = 'Cash Out via ' + method;
+      document.getElementById('withdrawAccountLabel').innerText = method.includes('Bank') || method.includes('Raast') ? 'IBAN / Raast ID' : 'Account / Mobile Number (03xxxxxxxxx)';
+    }
+
+    function openWithdrawModal(method) {
+      if (method && method !== 'Instant Cashout') {
+        selectWithdrawMethod(method);
+      } else {
+        selectWithdrawMethod('Easypaisa');
+      }
       document.getElementById('withdrawModal').classList.add('open');
     }
 
     function closeWithdrawModal() {
       document.getElementById('withdrawModal').classList.remove('open');
+    }
+
+    function setWithdrawAmount(amt) {
+      document.getElementById('withdrawAmount').value = amt;
+    }
+
+    function setWithdrawMax() {
+      document.getElementById('withdrawAmount').value = Math.floor(balance);
     }
 
     function executeCashOut() {
@@ -895,24 +1363,71 @@
       balance -= amount;
       document.getElementById('balanceText').innerText = formatNumber(balance);
       closeWithdrawModal();
-      showToast('Cash Out of Rs. ' + amount + ' initiated to ' + currentMethod);
+      showToast('Cash Out of Rs. ' + formatNumber(amount) + ' sent to ' + currentMethod);
 
       // Add to activity list
       const list = document.getElementById('activityList');
-      const item = document.createElement('div');
-      item.className = 'activity-item';
-      const badgeClass = currentMethod.toLowerCase().includes('easy') ? 'ep' : (currentMethod.toLowerCase().includes('jazz') ? 'jc' : 'data');
-      item.innerHTML = `
-        <div class="activity-left">
-          <div class="activity-badge ${badgeClass}"><i class="fa-solid fa-arrow-down"></i></div>
-          <div class="activity-text">
-            <div class="title">${currentMethod} Cash Out</div>
-            <div class="date">Just now • Processing</div>
+      if (list) {
+        const item = document.createElement('div');
+        item.className = 'activity-item';
+        const badgeClass = currentMethod.toLowerCase().includes('easy') ? 'ep' : (currentMethod.toLowerCase().includes('jazz') ? 'jc' : 'data');
+        item.innerHTML = `
+          <div class="activity-left">
+            <div class="activity-badge ${badgeClass}"><i class="fa-solid fa-arrow-down"></i></div>
+            <div class="activity-text">
+              <div class="title">${currentMethod} Cash Out</div>
+              <div class="date">Just now • Processing</div>
+            </div>
           </div>
-        </div>
-        <div class="activity-amount negative">- Rs. ${formatNumber(amount)}</div>
-      `;
-      list.prepend(item);
+          <div class="activity-amount negative">- Rs. ${formatNumber(amount)}</div>
+        `;
+        list.prepend(item);
+      }
+    }
+
+    function openAddWalletModal() {
+      document.getElementById('addWalletModal').classList.add('open');
+    }
+
+    function closeAddWalletModal() {
+      document.getElementById('addWalletModal').classList.remove('open');
+    }
+
+    function saveNewWallet() {
+      const type = document.getElementById('newWalletType').value;
+      const title = document.getElementById('newWalletTitle').value.trim();
+      const number = document.getElementById('newWalletNumber').value.trim();
+
+      if (!title || !number) {
+        alert('Please fill out account title and number.');
+        return;
+      }
+
+      const list = document.getElementById('walletsList');
+      if (list) {
+        const item = document.createElement('div');
+        item.className = 'wallet-card-item';
+        const avatarClass = type.includes('Easy') ? 'ep' : (type.includes('Jazz') ? 'jc' : 'bank');
+        const iconClass = type.includes('Bank') || type.includes('Raast') ? 'fa-building-columns' : 'fa-wallet';
+        item.innerHTML = `
+          <div class="wallet-avatar ${avatarClass}"><i class="fa-solid ${iconClass}"></i></div>
+          <div style="flex: 1;">
+            <div style="font-weight: 700; font-size: 14px; color: #1f2937;">${type}</div>
+            <div style="font-size: 12px; color: #6b7280;">${title}</div>
+            <div style="font-size: 13px; font-weight: 600; color: #111827; margin-top: 2px;">${number}</div>
+          </div>
+          <button onclick="showToast('Set ${type} as Primary')" style="border:none; background:none; color:var(--primary); font-size:12px; font-weight:600; cursor:pointer;">Set Primary</button>
+        `;
+        list.appendChild(item);
+      }
+
+      closeAddWalletModal();
+      showToast('New ' + type + ' linked successfully!');
+    }
+
+    function copyReferralCode() {
+      navigator.clipboard?.writeText('DATAPAK786');
+      showToast('Referral code DATAPAK786 copied to clipboard!');
     }
 
     function triggerHotReload() {
@@ -922,9 +1437,20 @@
     function switchNav(el, tabName) {
       document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
       el.classList.add('active');
-      if (tabName !== 'Home') {
-        showToast('Viewing ' + tabName + ' tab');
+      document.querySelectorAll('.tab-screen').forEach(screen => screen.style.display = 'none');
+      const target = document.getElementById('tab' + tabName);
+      if (target) {
+        target.style.display = 'block';
       }
+    }
+
+    function switchNavByName(tabName) {
+      const items = document.querySelectorAll('.nav-item');
+      items.forEach(item => {
+        if (item.querySelector('span')?.innerText.trim() === tabName) {
+          switchNav(item, tabName);
+        }
+      });
     }
   </script>
 </body>
