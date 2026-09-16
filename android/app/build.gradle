@@ -23,52 +23,19 @@ def configureAndroidApp = {
             versionName flutterVersionName
         }
 
-        // Dynamically resolve signing keystore file without failing on CI/CD
-        File validKeystoreFile = null
-        def candidatePaths = [
-            System.getenv("CM_KEYSTORE_PATH"),
-            "${projectDir}/debug.keystore",
-            "${rootDir}/debug.keystore",
-            "${rootDir}/../debug.keystore",
-            "${System.getProperty('user.home')}/.android/debug.keystore"
-        ]
-        for (def path : candidatePaths) {
-            if (path != null && !path.toString().trim().isEmpty()) {
-                File f = file(path.toString().trim())
-                if (f.exists() && f.isFile() && f.length() > 0) {
-                    validKeystoreFile = f
-                    break
-                }
-            }
-        }
-
         signingConfigs {
-            if (validKeystoreFile != null) {
-                ciSigning {
-                    storeFile validKeystoreFile
-                    storePassword(System.getenv("CM_KEYSTORE_PASSWORD") ?: "android")
-                    keyAlias(System.getenv("CM_KEY_ALIAS") ?: "androiddebugkey")
-                    keyPassword(System.getenv("CM_KEY_PASSWORD") ?: "android")
-                }
+            debug {
+                // Uses standard Android debug signing automatically
             }
         }
 
         buildTypes {
             debug {
-                // If a valid keystore exists on disk, sign with it; otherwise set null to prevent PackageApplication missing file failure
-                if (validKeystoreFile != null && signingConfigs.findByName("ciSigning") != null) {
-                    signingConfig signingConfigs.ciSigning
-                } else {
-                    signingConfig null
-                }
+                signingConfig signingConfigs.debug
             }
 
             release {
-                if (validKeystoreFile != null && signingConfigs.findByName("ciSigning") != null) {
-                    signingConfig signingConfigs.ciSigning
-                } else {
-                    signingConfig null
-                }
+                signingConfig signingConfigs.debug
                 minifyEnabled false
                 shrinkResources false
             }
